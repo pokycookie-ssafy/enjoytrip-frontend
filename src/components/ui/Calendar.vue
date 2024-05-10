@@ -12,6 +12,7 @@ const dayArr = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 const props = defineProps<{
   default?: { start: Date; end: Date }
   range?: boolean
+  border?: boolean
 }>()
 
 const emits = defineEmits<{
@@ -144,7 +145,10 @@ watch(
         {{ day }}
       </p>
     </div>
-    <div class="w-full flex-1 grid grid-cols-7 grid-rows-6 border rounded">
+    <div
+      class="w-full flex-1 grid grid-cols-7 grid-rows-6 data-[border=true]:border rounded"
+      :data-border="props.border"
+    >
       <button
         v-for="(cell, i) in calendar"
         class="transition-all data-[isStart=true]:rounded-tl-md data-[isCurr=false]:text-zinc-300 data-[isEnd=true]:rounded-br-md data-[selected=true]:bg-indigo-500 data-[selected=true]:text-white data-[drag=true]:bg-zinc-200 data-[today=true]:underline data-[day='0']:data-[isCurr=true]:data-[selected=false]:text-blue-600 data-[day='1']:data-[isCurr=true]:data-[selected=false]:text-red-600 hover:bg-zinc-100 text-sm outline-none"

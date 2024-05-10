@@ -45,7 +45,7 @@ const onBlur = () => {
     @click="onFocus"
   >
     <label
-      class="font-medium data-[focus=true]:text-indigo-600 data-[empty=true]:text-sm text-xs text-zinc-500 transition-all data-[status='success']:text-indigo-500 data-[status='warn']:text-yellow-500 data-[status='danger']:text-red-500"
+      class="data-[focus=true]:text-indigo-600 data-[empty=false]:mb-1 data-[empty=true]:text-sm text-xs text-zinc-500 transition-all data-[status='success']:text-indigo-500 data-[status='warn']:text-yellow-500 data-[status='danger']:text-red-500"
       :data-focus="focus"
       :data-empty="isEmpty && !focus"
       :data-status="props.info?.status"

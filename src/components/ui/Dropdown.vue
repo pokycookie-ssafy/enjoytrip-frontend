@@ -69,7 +69,7 @@ onUnmounted(() => {
       </button>
     </div>
     <div
-      class="w-full border max-h-56 z-[999] overflow-y-auto absolute bg-white top-12 rounded transition-all data-[open=false]:opacity-0 data-[open=false]:pointer-events-none data-[open=false]:scale-75"
+      :class="`w-full border flex flex-col max-h-56 z-[999] overflow-y-auto absolute bg-white top-12 rounded transition-all data-[open=false]:opacity-0 data-[open=false]:pointer-events-none data-[open=false]:scale-75`"
       ref="optionContainerREF"
       :data-open="isOpen"
     >
