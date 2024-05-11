@@ -4,9 +4,10 @@ import LoginView from '@/views/LoginView.vue'
 import SignupView from '@/views/SignupView.vue'
 import BoardView from '@/views/BoardView.vue'
 import MapView from '@/views/MapView.vue'
-import FindUser from '@/views/FindUser.vue'
-import FindUserEmail from '@/views/FindUserEmail.vue'
-import FindUserPassword from '@/views/FindUserPassword.vue'
+import ProfileView from '@/views/ProfileView.vue'
+import FindUserView from '@/views/FindUserView.vue'
+import FindUserEmailForm from '@/views/FindUserEmailForm.vue'
+import FindUserPasswordForm from '@/views/FindUserPasswordForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,19 +39,23 @@ const router = createRouter({
     },
     {
       path: '/find',
-      component: FindUser,
+      component: FindUserView,
       children: [
         {
           path: 'id',
           name: 'findEmail',
-          component: FindUserEmail,
+          component: FindUserEmailForm,
         },
         {
           path: 'password',
           name: 'findPassword',
-          component: FindUserPassword,
+          component: FindUserPasswordForm,
         },
       ],
+    },
+    {
+      path: '/profile',
+      component: ProfileView,
     },
   ],
 })
