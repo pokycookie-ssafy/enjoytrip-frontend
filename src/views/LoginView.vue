@@ -12,17 +12,20 @@ import Input from '@/components/ui/Input.vue'
         Login to your account
       </h2>
       <div class="flex flex-col gap-2">
-        <Input label="id" />
-        <Input label="password" type="password" />
-        <p class="text-xs text-indigo-600 w-full text-right">
-          Forgot password?
-        </p>
+        <Input label="Email" />
+        <Input label="Password" type="password" />
+        <RouterLink
+          class="text-xs text-indigo-600 w-full text-right hover:text-indigo-500"
+          :to="{ name: 'findEmail' }"
+        >
+          Forgot account?
+        </RouterLink>
       </div>
       <Button>Login</Button>
       <span class="text-sm w-full text-center"
         >Not a member?
         <RouterLink
-          class="text-indigo-600 font-semibold"
+          class="text-indigo-600 font-semibold hover:text-indigo-500"
           :to="{ name: 'signup' }"
           >Let's free Sign up</RouterLink
         >
