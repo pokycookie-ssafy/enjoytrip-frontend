@@ -38,14 +38,14 @@ onMounted(async () => {
 <template>
   <section class="w-full h-screen relative">
     <span class="title text-white font-semibold flex flex-col absolute">
-      <h2>Enjoy your trip!</h2>
+      <h2>나는 지금,</h2>
       <h2>
         <Typewriter
           :text="areaArr"
           :speed="100"
           :delay="100"
           :duration="3000"
-        />로 떠나요!
+        />에 가고 싶다!
       </h2>
     </span>
 
@@ -61,6 +61,5 @@ onMounted(async () => {
   font-size: min(6vw, 6rem);
   left: min(6vw, 5rem);
   bottom: min(6vw, 5rem);
-  gap: min(2vw, 1.5rem);
 }
 </style>

@@ -8,6 +8,7 @@ const props = defineProps<{
     status: 'success' | 'warn' | 'danger'
     message: string
   }
+  readonly?: boolean
 }>()
 
 const emits = defineEmits<{
@@ -60,6 +61,7 @@ const onBlur = () => {
       @focus="onFocus"
       @blur="onBlur"
       @input="(e) => inputHandler(e)"
+      :readonly="props.readonly"
     />
     <p
       class="text-xs mt-2 h-5 data-[status='']:h-0 data-[status='']:mt-0 data-[status='success']:text-indigo-500 data-[status='warn']:text-yellow-500 data-[status='danger']:text-red-500 transition-all"

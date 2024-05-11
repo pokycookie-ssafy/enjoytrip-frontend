@@ -29,7 +29,7 @@ watch(value, (value) => {
 
 <template>
   <button
-    class="bg-zinc-200 w-10 h-5 border-2 rounded-full box-content outline-none flex items-center transition-colors data-[value=true]:bg-blue-600 data-[value=true]:border-blue-600"
+    class="bg-zinc-200 w-10 h-5 border-2 rounded-full box-content outline-none flex items-center transition-colors data-[value=true]:bg-indigo-600 data-[value=true]:border-indigo-600"
     :data-value="value"
     @click="toggle()"
   >
