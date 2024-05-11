@@ -37,9 +37,7 @@ onMounted(async () => {
 
 <template>
   <section class="w-full h-screen relative">
-    <span
-      class="text-white font-semibold text-6xl flex flex-col gap-6 absolute left-20 bottom-20"
-    >
+    <span class="title text-white font-semibold flex flex-col absolute">
       <h2>Enjoy your trip!</h2>
       <h2>
         <Typewriter
@@ -57,3 +55,12 @@ onMounted(async () => {
     />
   </section>
 </template>
+
+<style scoped>
+.title {
+  font-size: min(6vw, 6rem);
+  left: min(6vw, 5rem);
+  bottom: min(6vw, 5rem);
+  gap: min(2vw, 1.5rem);
+}
+</style>
