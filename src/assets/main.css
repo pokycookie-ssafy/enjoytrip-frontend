@@ -8,3 +8,18 @@
     'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     sans-serif;
 }
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #e4e4e7;
+}
+*::-webkit-scrollbar-track {
+  background-color: #f4f4f5;
+}
+* {
+  scrollbar-color: #e4e4e7 #f4f4f5;
+  scrollbar-width: thin;
+}
