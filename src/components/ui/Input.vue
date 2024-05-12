@@ -9,6 +9,7 @@ const props = defineProps<{
     message: string
   }
   readonly?: boolean
+  tel?: boolean
 }>()
 
 const emits = defineEmits<{
@@ -40,7 +41,7 @@ const onBlur = () => {
 
 <template>
   <div
-    class="flex flex-col overflow-hidden border p-2 data-[focus=true]:border-indigo-600 rounded transition-all data-[status='success']:border-indigo-500 data-[status='warn']:border-yellow-500 data-[status='danger']:border-red-500"
+    class="flex flex-col justify-center min-h-10 overflow-hidden border p-2 data-[focus=true]:border-indigo-600 rounded transition-all data-[status='success']:border-indigo-500 data-[status='warn']:border-yellow-500 data-[status='danger']:border-red-500"
     :data-focus="focus"
     :data-status="props.info?.status"
     @click="onFocus"

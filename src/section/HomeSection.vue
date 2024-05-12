@@ -37,7 +37,9 @@ onMounted(async () => {
 
 <template>
   <section class="w-full h-screen relative">
-    <span class="title text-white font-semibold flex flex-col absolute">
+    <span
+      class="title text-white font-semibold flex flex-col absolute select-none"
+    >
       <h2>나는 지금,</h2>
       <h2>
         <Typewriter
@@ -51,7 +53,7 @@ onMounted(async () => {
 
     <img
       :src="bg"
-      class="object-cover absolute left-0 top-0 -z-10 w-full h-full"
+      class="object-cover absolute left-0 top-0 -z-10 w-full h-full select-none"
     />
   </section>
 </template>

@@ -25,6 +25,7 @@ import Toggle from '@/components/ui/Toggle.vue'
               <p class="text-sm text-zinc-400 font-light">cookie@ssafy.com</p>
             </span>
           </div>
+          <Input class="" label="닉네임" />
           <Input class="" label="이름" />
           <Input class="" label="전화번호" />
           <div class="flex justify-end mt-2">
@@ -48,12 +49,12 @@ import Toggle from '@/components/ui/Toggle.vue'
           <h3 class="font-semibold text-zinc-700 border-b pb-4">
             프로모션 정보수신 동의
           </h3>
-          <span class="flex justify-between text-zinc-700 pt-2 pb-2">
-            <p>휴대전화</p>
+          <span class="flex justify-between text-zinc-700 pt-2 pb-2 text-sm">
+            <p>휴대전화 정보수신 동의</p>
             <Toggle />
           </span>
-          <span class="flex justify-between text-zinc-700 pt-2 pb-2">
-            <p>이메일</p>
+          <span class="flex justify-between text-zinc-700 pt-2 pb-2 text-sm">
+            <p>이메일 정보수신 동의</p>
             <Toggle />
           </span>
         </InputGroup>

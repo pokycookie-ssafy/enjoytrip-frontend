@@ -49,7 +49,7 @@ onUnmounted(() => {
 <template>
   <div class="relative" ref="dropdownREF">
     <div
-      class="h-10 border rounded data-[open=true]:border-indigo-600 divide-x flex justify-between items-center overflow-hidden cursor-pointer"
+      class="h-10 border rounded bg-white data-[open=true]:border-indigo-600 divide-x flex justify-between items-center overflow-hidden cursor-pointer"
       ref="indicatorREF"
       :data-open="isOpen"
     >

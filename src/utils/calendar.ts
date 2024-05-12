@@ -38,3 +38,12 @@ export function dailyArr(year: number, month: number) {
   }
   return result
 }
+
+export function getLastYear() {
+  return new Date().getFullYear()
+}
+
+export function getLastDate(year: number, month: number) {
+  const date = new Date(year, month + 1, 0)
+  return date.getDate()
+}

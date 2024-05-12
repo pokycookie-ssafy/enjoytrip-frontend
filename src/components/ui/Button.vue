@@ -1,4 +1,8 @@
 <script setup lang="ts">
+const props = defineProps<{
+  type?: 'default' | 'danger'
+}>()
+
 const emits = defineEmits<{
   (e: 'onClick'): void
 }>()
@@ -6,8 +10,9 @@ const emits = defineEmits<{
 
 <template>
   <button
-    class="rounded transition-colors text-white bg-indigo-600 p-2 pl-4 pr-4 text-sm hover:bg-indigo-500"
+    class="rounded transition-colors text-white p-2 pl-4 pr-4 text-sm bg-indigo-600 hover:bg-indigo-500 data-[type='danger']:hover:bg-red-600"
     @click="emits('onClick')"
+    :data-type="props.type ?? 'default'"
   >
     <slot />
   </button>
