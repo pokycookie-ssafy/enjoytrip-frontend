@@ -98,8 +98,8 @@ const data: IBoard[] = [
 </script>
 
 <template>
-  <main class="w-vw p-24">
-    <ul class="flex flex-col gap-2">
+  <main class="w-vw p-24 flex flex-col items-center">
+    <ul class="flex flex-col gap-2 w-full max-w-[600px]">
       <BoardLi
         v-for="e in data"
         :title="e.title"

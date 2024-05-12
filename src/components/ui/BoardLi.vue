@@ -24,11 +24,14 @@ const timeString = computed(() => {
     >
       공지
     </div>
-    <p class="flex-1 overflow-hidden text-nowrap text-ellipsis text-zinc-600">
+    <RouterLink
+      :to="'#'"
+      class="flex-1 overflow-hidden text-nowrap text-ellipsis text-zinc-600 hover:underline cursor-pointer"
+    >
       {{ props.title }}
-    </p>
+    </RouterLink>
     <div class="flex gap-4">
-      <p>{{ props.writer }}</p>
+      <p class="hover:underline cursor-pointer">{{ props.writer }}</p>
       <p>{{ timeString }}</p>
     </div>
   </li>
