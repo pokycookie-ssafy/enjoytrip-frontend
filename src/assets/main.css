@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .ellipsis {
+    overflow: hidden;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
 * {
   font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
     'Pretendard Variable', Pretendard, Roboto, 'Noto Sans KR', 'Segoe UI',

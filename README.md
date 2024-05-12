@@ -11,8 +11,3 @@
 ![board](/uploads/5dd91c07ed18524dae3548e46ecf18c0/board.png)
 
 ![map](/uploads/c14e1380254ee946315aad79054929a7/map.png)
-
-# TODO
-
-- [ ] 생년월일 input 변경
-- [ ] 전화번호 input 변경
