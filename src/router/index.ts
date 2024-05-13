@@ -9,6 +9,7 @@ import FindUserView from '@/views/FindUserView.vue'
 import FindUserEmailForm from '@/views/FindUserEmailForm.vue'
 import FindUserPasswordForm from '@/views/FindUserPasswordForm.vue'
 import BoardDetail from '@/components/ui/BoardDetail.vue'
+import ReviewView from '@/views/ReviewView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,6 +65,11 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView,
+    },
+    {
+      path: '/review',
+      name: 'review',
+      component: ReviewView,
     },
   ],
 })
