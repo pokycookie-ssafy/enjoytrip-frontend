@@ -3,6 +3,7 @@ import Button from '@/components/ui/Button.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import Input from '@/components/ui/Input.vue'
 import { getLastDate, getLastYear } from '@/utils/calendar'
+import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
 import { onMounted, ref, watch } from 'vue'
 
 const yearArr = ref<number[]>([])
@@ -122,7 +123,13 @@ onMounted(() => {
               알뜰폰
             </button>
           </Dropdown>
-          <Input class="flex-1" label="전화번호" />
+          <Input
+            class="flex-1"
+            label="전화번호"
+            :encoder="telIncoder"
+            :decoder="telDecoder"
+            :rule="telRool"
+          />
         </div>
       </div>
     </div>

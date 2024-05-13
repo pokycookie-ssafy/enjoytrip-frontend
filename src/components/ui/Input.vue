@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, type InputTypeHTMLAttribute } from 'vue'
+import { computed, ref, watch, type InputTypeHTMLAttribute } from 'vue'
 
 const props = defineProps<{
+  default?: string
   label?: string
   type?: InputTypeHTMLAttribute
   info?: {
@@ -9,7 +10,9 @@ const props = defineProps<{
     message: string
   }
   readonly?: boolean
-  tel?: boolean
+  encoder?: (input: string) => string
+  decoder?: (input: string) => string
+  rule?: (key: string) => boolean
 }>()
 
 const emits = defineEmits<{
@@ -17,6 +20,7 @@ const emits = defineEmits<{
 }>()
 
 const input = ref('')
+const inputShow = ref('')
 const focus = ref(false)
 const inputREF = ref<HTMLInputElement | null>(null)
 
@@ -24,8 +28,14 @@ const isEmpty = computed(() => {
   return input.value.length === 0
 })
 
+const keydownHandler = (e: KeyboardEvent) => {
+  if (props.rule && !props.rule(e.key)) e.preventDefault()
+}
+
 const inputHandler = (e: Event) => {
-  input.value = (e.target as HTMLInputElement).value
+  const targetValue = (e.target as HTMLInputElement).value
+  input.value = props.decoder ? props.decoder(targetValue) : targetValue
+  inputShow.value = props.encoder ? props.encoder(input.value) : input.value
   emits('onChange', input.value)
 }
 
@@ -37,6 +47,13 @@ const onFocus = () => {
 const onBlur = () => {
   focus.value = false
 }
+
+watch(
+  () => props.default,
+  () => {
+    input.value = props.default ?? ''
+  }
+)
 </script>
 
 <template>
@@ -57,11 +74,12 @@ const onBlur = () => {
       class="outline-none h-6 data-[empty=true]:h-0 transition-all"
       ref="inputREF"
       :type="props.type"
-      :value="input"
+      :value="inputShow"
       :data-empty="isEmpty && !focus"
       @focus="onFocus"
       @blur="onBlur"
-      @input="(e) => inputHandler(e)"
+      @input="inputHandler"
+      @keydown="keydownHandler"
       :readonly="props.readonly"
     />
     <p
