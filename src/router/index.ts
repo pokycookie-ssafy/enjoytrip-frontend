@@ -8,7 +8,6 @@ import ProfileView from '@/views/ProfileView.vue'
 import FindUserView from '@/views/FindUserView.vue'
 import FindUserEmailForm from '@/views/FindUserEmailForm.vue'
 import FindUserPasswordForm from '@/views/FindUserPasswordForm.vue'
-import BoardDetail from '@/components/ui/BoardDetail.vue'
 import ReviewView from '@/views/ReviewView.vue'
 
 const router = createRouter({
@@ -33,12 +32,6 @@ const router = createRouter({
       path: '/board',
       name: 'board',
       component: BoardView,
-      children: [
-        {
-          path: ':id',
-          component: BoardDetail,
-        },
-      ],
     },
     {
       path: '/map',
