@@ -26,7 +26,7 @@ const timeString = computed(() => {
 })
 
 onMounted(async () => {
-  const { data } = await axios<IAttraction>('/mock/attraction.json')
+  const { data } = await axios<IAttraction>('/api/attraction.json')
   mockAttraction.value = data
 })
 </script>
