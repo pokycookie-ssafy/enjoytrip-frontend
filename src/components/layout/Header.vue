@@ -16,6 +16,7 @@ const links: IHeaderLink[] = [
   { label: 'Board', name: 'board' },
   { label: 'Map', name: 'map' },
   { label: 'Review', name: 'review' },
+  { label: 'Attraction', name: 'review' },
 ]
 
 const loginBtnHandler = () => {
