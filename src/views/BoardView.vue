@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BoardLi from '@/components/ui/BoardLi.vue'
+import BoardNav from '@/components/ui/BoardNav.vue'
 
 interface IBoard {
   title: string
@@ -98,15 +99,18 @@ const data: IBoard[] = [
 </script>
 
 <template>
-  <main class="w-vw p-24 flex flex-col items-center">
-    <ul class="flex flex-col gap-2 w-full max-w-[600px]">
-      <BoardLi
-        v-for="e in data"
-        :title="e.title"
-        :writer="e.writer"
-        :time="e.register"
-        :isNotice="e.isNotice"
-      />
-    </ul>
+  <main class="w-vw p-24 flex justify-center">
+    <section class="flex gap-4 w-full max-w-[800px]">
+      <BoardNav class="md:flex hidden" />
+      <ul class="flex flex-col gap-4 flex-1 overflow-hidden">
+        <BoardLi
+          v-for="e in data"
+          :title="e.title"
+          :writer="e.writer"
+          :time="e.register"
+          :isNotice="e.isNotice"
+        />
+      </ul>
+    </section>
   </main>
 </template>
