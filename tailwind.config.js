@@ -11,6 +11,10 @@ export default {
       },
       width: {
         vw: 'calc(100vw - (100vw - 100%))',
+        indent: 'calc(100% - 50px)',
+      },
+      maxHeight: {
+        inf: 999999999999,
       },
     },
   },

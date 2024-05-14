@@ -31,7 +31,7 @@ onMounted(async () => {
       />
     </div>
     <div class="flex flex-col gap-2 pb-2 border-b">
-      <AreaSelect />
+      <AreaSelect useEntire />
     </div>
     <div class="flex flex-col gap-1 pb-2 border-b">
       <div
