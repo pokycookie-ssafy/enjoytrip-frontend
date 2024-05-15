@@ -24,6 +24,11 @@ const customOverlays = ref<kakao.maps.CustomOverlay[]>([])
 const initMap = () => {
   if (!window.kakao || !window.kakao.maps) return
   if (!kakaoMapREF.value) return
+  if (!kakao.maps.LatLng) return
+
+  console.group('KAKAO MAP')
+  console.info('initMap')
+  console.groupEnd()
 
   const options = {
     center: new kakao.maps.LatLng(0, 0),
@@ -61,12 +66,18 @@ const mountKakaoScript = () => {
   script.src = HOST + KEY + QUERY
   script.onload = () => kakao.maps.load(initMap)
 
+  console.group('KAKAO MAP')
+  console.info('mountKakaoScript')
+  console.groupEnd()
+
   document.head.appendChild(script)
 }
 
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
-    initMap()
+    kakao.maps.load(() => {
+      initMap()
+    })
   } else {
     mountKakaoScript()
   }
@@ -123,7 +134,5 @@ watch([kakaoMapREF, () => props.zoomControl], ([ref]) => {
 </script>
 
 <template>
-  <section class="overflow-hidden">
-    <div ref="kakaoMapREF" class="w-full h-full"></div>
-  </section>
+  <div ref="kakaoMapREF" class="w-full h-full"></div>
 </template>

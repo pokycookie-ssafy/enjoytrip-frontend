@@ -19,6 +19,6 @@ const marker: IMarker[] = [
 
 <template>
   <main class="w-vw h-screen">
-    <KakaoMap class="w-full h-full" :markers="marker" zoomControl />
+    <KakaoMap :markers="marker" zoomControl />
   </main>
 </template>

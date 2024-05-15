@@ -3,19 +3,19 @@ import { onMounted, ref } from 'vue'
 import Button from './Button.vue'
 import CheckBox from './CheckBox.vue'
 import axios from 'axios'
-import type { ICategory, TCategoryCode } from '@/types/tripCategory'
 import AreaSelect from './AreaSelect.vue'
+import type { IContentType } from '@/types/contentType'
 
-const category = ref<ICategory[]>([])
-const selected = ref<Set<TCategoryCode>>(new Set())
+const category = ref<IContentType[]>([])
+const selected = ref<Set<number>>(new Set())
 
-const checkHandler = (checked: boolean, code: TCategoryCode) => {
+const checkHandler = (checked: boolean, code: number) => {
   if (checked) selected.value.add(code)
   else selected.value.delete(code)
 }
 
 onMounted(async () => {
-  const { data } = await axios.get<ICategory[]>('/categoryCode.json')
+  const { data } = await axios.get<IContentType[]>('/contentType.json')
   category.value = data
 })
 </script>

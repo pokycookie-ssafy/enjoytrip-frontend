@@ -7,7 +7,7 @@ const props = defineProps<{
 <template>
   <section class="flex h-72 flex-wrap gap-1" v-if="props.imgSrc.length < 3">
     <div
-      class="flex-1 min-w-[48%] h-full rounded overflow-hidden"
+      class="flex-1 min-w-[48%] h-full rounded overflow-hidden border"
       v-for="(src, i) in props.imgSrc"
     >
       <img class="w-full h-full rounded object-cover" :key="i" :src="src" />
@@ -15,17 +15,17 @@ const props = defineProps<{
   </section>
 
   <section class="flex h-72 gap-1" v-if="props.imgSrc.length == 3">
-    <div class="flex-1 h-full rounded overflow-hidden">
+    <div class="flex-1 h-full rounded overflow-hidden border">
       <img class="w-full h-full rounded object-cover" :src="props.imgSrc[0]" />
     </div>
     <div class="flex flex-col flex-1 gap-1">
-      <div class="flex-1 w-full rounded overflow-hidden">
+      <div class="flex-1 w-full rounded overflow-hidden border">
         <img
           class="w-full h-full rounded object-cover"
           :src="props.imgSrc[1]"
         />
       </div>
-      <div class="flex-1 w-full rounded overflow-hidden">
+      <div class="flex-1 w-full rounded overflow-hidden border">
         <img
           class="w-full h-full rounded object-cover"
           :src="props.imgSrc[2]"
@@ -36,13 +36,13 @@ const props = defineProps<{
 
   <section class="flex h-72 gap-1" v-if="props.imgSrc.length > 3">
     <div class="flex flex-col flex-1 gap-1">
-      <div class="flex-1 w-full rounded overflow-hidden">
+      <div class="flex-1 w-full rounded overflow-hidden border">
         <img
           class="w-full h-full rounded object-cover"
           :src="props.imgSrc[0]"
         />
       </div>
-      <div class="flex-1 w-full rounded overflow-hidden">
+      <div class="flex-1 w-full rounded overflow-hidden border">
         <img
           class="w-full h-full rounded object-cover"
           :src="props.imgSrc[1]"
@@ -50,13 +50,13 @@ const props = defineProps<{
       </div>
     </div>
     <div class="flex flex-col flex-1 gap-1">
-      <div class="flex-1 w-full rounded overflow-hidden">
+      <div class="flex-1 w-full rounded overflow-hidden border">
         <img
           class="w-full h-full rounded object-cover"
           :src="props.imgSrc[2]"
         />
       </div>
-      <div class="flex-1 w-full rounded overflow-hidden">
+      <div class="flex-1 w-full rounded overflow-hidden border">
         <img
           class="w-full h-full rounded object-cover"
           :src="props.imgSrc[3]"
