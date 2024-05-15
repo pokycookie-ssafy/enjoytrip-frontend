@@ -1,13 +1,7 @@
-export type TCategoryCode =
-  | 'A01'
-  | 'A02'
-  | 'A03'
-  | 'A04'
-  | 'A05'
-  | 'B02'
-  | 'C01'
+import type { TContentCode } from './Attraction'
 
 export interface ICategory {
-  code: TCategoryCode
+  code: TContentCode
   name: string
+  icon: string
 }
