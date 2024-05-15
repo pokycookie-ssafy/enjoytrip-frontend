@@ -1,0 +1,31 @@
+/*
+- enter-active
+    - enter-from
+    - enter-to
+- leave-active
+    - leave-from
+    - leave-to
+
+*/
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s;
+}
+
+.modal-enter-active .modal--window,
+.modal-leave-active .modal--window {
+  transition: all 0.3s;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal--window {
+  transform: translateY(30%);
+}
+.modal-leave-to .modal--window {
+  transform: translateY(30px);
+}

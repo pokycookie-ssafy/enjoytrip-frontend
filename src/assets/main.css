@@ -1,3 +1,5 @@
+@import './transition.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -42,4 +44,8 @@
 * {
   scrollbar-color: #e4e4e7 #f4f4f5;
   scrollbar-width: thin;
+}
+
+body:has(#app[scroll='false']) {
+  overflow: hidden;
 }
