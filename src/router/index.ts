@@ -9,6 +9,7 @@ import FindUserView from '@/views/FindUserView.vue'
 import FindUserEmailForm from '@/views/FindUserEmailForm.vue'
 import FindUserPasswordForm from '@/views/FindUserPasswordForm.vue'
 import ReviewView from '@/views/ReviewView.vue'
+import AttractionView from '@/views/AttractionView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,11 @@ const router = createRouter({
       path: '/review',
       name: 'review',
       component: ReviewView,
+    },
+    {
+      path: '/attraction',
+      name: 'attraction',
+      component: AttractionView,
     },
   ],
 })
