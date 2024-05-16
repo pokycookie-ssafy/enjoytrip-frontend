@@ -1,6 +1,25 @@
 <script setup lang="ts">
 import Button from '@/components/ui/Button.vue'
-import Input from '@/components/ui/Input.vue'
+import Input, { type IInputInfo } from '@/components/ui/Input.vue'
+import axios from 'axios'
+import { ref } from 'vue'
+
+const email = ref('')
+const password = ref('')
+
+const emailInfo = ref<IInputInfo | null>(null)
+const passwordInfo = ref<IInputInfo | null>(null)
+
+const submitHandler = async () => {
+  try {
+    axios.post('/api/login', {
+      email: email.value,
+      password: password.value,
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
 </script>
 
 <template>
@@ -12,8 +31,12 @@ import Input from '@/components/ui/Input.vue'
         Login to your account
       </h2>
       <div class="flex flex-col gap-2">
-        <Input label="Email" />
-        <Input label="Password" type="password" />
+        <Input label="Email" @onChange="(v) => (email = v)" />
+        <Input
+          label="Password"
+          type="password"
+          @onChange="(v) => (password = v)"
+        />
         <RouterLink
           class="text-xs text-indigo-600 w-full text-right hover:text-indigo-500"
           :to="{ name: 'findEmail' }"
@@ -21,7 +44,7 @@ import Input from '@/components/ui/Input.vue'
           Forgot account?
         </RouterLink>
       </div>
-      <Button>Login</Button>
+      <Button @click="submitHandler">Login</Button>
       <span class="text-sm w-full text-center"
         >Not a member?
         <RouterLink

@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch, type InputTypeHTMLAttribute } from 'vue'
 
+export interface IInputInfo {
+  status: 'success' | 'warn' | 'danger'
+  message: string
+}
+
 const props = defineProps<{
   default?: string
   label?: string
   type?: InputTypeHTMLAttribute
-  info?: {
-    status: 'success' | 'warn' | 'danger'
-    message: string
-  }
+  info?: IInputInfo
   readonly?: boolean
   encoder?: (input: string) => string
   decoder?: (input: string) => string
