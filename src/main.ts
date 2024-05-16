@@ -1,4 +1,5 @@
 import './assets/main.css'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -9,9 +10,14 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
+import { QuillEditor } from '@vueup/vue-quill'
 
 library.add(fas)
 library.add(far)
 library.add(fab)
 
-createApp(App).use(createPinia()).use(router).mount('#app')
+createApp(App)
+  .use(createPinia())
+  .use(router)
+  .component('QuillEditor', QuillEditor)
+  .mount('#app')

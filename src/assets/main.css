@@ -1,4 +1,5 @@
 @import './transition.css';
+@import './quillEditor.css';
 
 @tailwind base;
 @tailwind components;

@@ -16,6 +16,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/vue-fontawesome": "^3.0.6",
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.6.8",
     "dayjs": "^1.11.11",
     "pinia": "^2.1.7",
