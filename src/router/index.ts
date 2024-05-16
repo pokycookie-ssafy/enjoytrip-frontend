@@ -30,7 +30,7 @@ const router = createRouter({
       component: SignupView,
     },
     {
-      path: '/board',
+      path: '/boards',
       name: 'board',
       component: BoardView,
     },
@@ -61,12 +61,12 @@ const router = createRouter({
       component: ProfileView,
     },
     {
-      path: '/review',
+      path: '/reviews',
       name: 'review',
       component: ReviewView,
     },
     {
-      path: '/attraction',
+      path: '/attractions',
       name: 'attraction',
       component: AttractionView,
     },
