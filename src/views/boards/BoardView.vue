@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import BoardLi from '@/components/boards/BoardLi.vue'
-import BoardNav from '@/components/boards/BoardNav.vue'
-import Pagination from '@/components/ui/Pagination.vue'
-import type { IBoard } from '@/types/Board'
 import axios from 'axios'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import type { IBoard } from '@/types/Board'
+import BoardLi from '@/components/boards/BoardLi.vue'
+import BoardNav from '@/components/boards/BoardNav.vue'
+import Pagination from '@/components/ui/Pagination.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -58,10 +58,17 @@ watch(
   <main class="w-vw p-24 flex justify-center">
     <section class="flex flex-col w-full max-w-[800px]">
       <BoardNav />
-      <ul class="flex flex-col flex-1 overflow-hidden divide-y">
+      <ul class="flex flex-col flex-1 overflow-hidden divide-y border-b">
         <BoardLi v-for="e in notices" :data="e" isNotice />
         <BoardLi v-for="e in boards" :data="e" />
       </ul>
+      <div class="w-full flex justify-end items-center pt-2 pb-2">
+        <RouterLink
+          class="rounded transition-colors text-white p-2 pl-4 pr-4 text-sm bg-indigo-600 hover:bg-indigo-500"
+          :to="{ name: 'newBoard' }"
+          >글쓰기</RouterLink
+        >
+      </div>
       <div class="w-full flex justify-center items-center mt-14">
         <Pagination
           :idx="pageIdx"

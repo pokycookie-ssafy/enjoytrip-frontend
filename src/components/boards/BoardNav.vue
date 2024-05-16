@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Button from './Button.vue'
-import Dropdown from './Dropdown.vue'
+import Button from '@/components/ui/Button.vue'
+import Dropdown from '@/components/ui/Dropdown.vue'
 
 const rangeOptions = [
   { label: '전체', value: 0 },

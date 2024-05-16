@@ -42,6 +42,7 @@ const router = createRouter({
     },
     {
       path: '/boards/write',
+      name: 'newBoard',
       component: BoardFormView,
     },
     {
