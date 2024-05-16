@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ProfileImg from './ProfileImg.vue'
-import StarRating from './StarRating.vue'
+import ProfileImg from '@/components/ui/ProfileImg.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 </script>
 
 <template>

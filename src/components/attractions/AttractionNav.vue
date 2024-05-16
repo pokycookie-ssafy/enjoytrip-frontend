@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import Button from './Button.vue'
-import CheckBox from './CheckBox.vue'
 import axios from 'axios'
-import AreaSelect from './AreaSelect.vue'
+import Button from '@/components/ui/Button.vue'
+import CheckBox from '@/components/ui/CheckBox.vue'
+import AreaSelect from '@/components/ui/AreaSelect.vue'
 import type { IContentType } from '@/types/ContentType'
 
 const category = ref<IContentType[]>([])

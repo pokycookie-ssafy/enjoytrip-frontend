@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import BoardLi from '@/components/ui/BoardLi.vue'
-import BoardNav from '@/components/ui/BoardNav.vue'
+import BoardLi from '@/components/boards/BoardLi.vue'
+import BoardNav from '@/components/boards/BoardNav.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import type { IBoard } from '@/types/Board'
 import axios from 'axios'

@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import MutliImage from './MutliImage.vue'
-import Like from './Like.vue'
-import Comment from './Comment.vue'
-import type { IAttraction } from '@/types/Attraction'
 import axios from 'axios'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import MutliImage from '@/components/ui/MutliImage.vue'
+import Like from '@/components/ui/Like.vue'
+import type { IAttraction } from '@/types/Attraction'
 import type { ISido } from '@/types/SidoGugun'
-import AttractionCategoryLabel from './AttractionCategoryLabel.vue'
-import AttractionStarRating from './AttractionStarRating.vue'
+import AttractionCategoryLabel from '@/components/attractions/AttractionCategoryLabel.vue'
+import AttractionStarRating from '@/components/attractions/AttractionStarRating.vue'
+import ReviewPreviewCard from '@/components/attractions/ReviewPreviewCard.vue'
+import AttractionMap from '@/components/attractions/AttractionMap.vue'
 import type { IContentType } from '@/types/ContentType'
-import ReviewPreviewCard from './ReviewPreviewCard.vue'
-import AttractionMap from './AttractionMap.vue'
 
 const props = defineProps<{
   data: IAttraction

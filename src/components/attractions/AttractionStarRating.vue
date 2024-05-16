@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import StarRating from './StarRating.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 import { ref, watch } from 'vue'
 
 const props = defineProps<{

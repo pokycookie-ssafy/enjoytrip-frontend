@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Modal from '@/components/modal/Modal.vue'
 import AttractionModal from '@/components/modal/AttractionModal.vue'
-import AttractionLi from '@/components/ui/AttractionLi.vue'
-import AttractionNav from '@/components/ui/AttractionNav.vue'
+import AttractionLi from '@/components/attractions/AttractionLi.vue'
+import AttractionNav from '@/components/attractions/AttractionNav.vue'
 import type { IAttraction } from '@/types/Attraction'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'

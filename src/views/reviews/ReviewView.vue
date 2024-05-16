@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ReviewLi from '@/components/ui/ReviewLi.vue'
-import ReviewNav from '@/components/ui/ReviewNav.vue'
+import ReviewLi from '@/components/reviews/ReviewLi.vue'
+import ReviewNav from '@/components/reviews/ReviewNav.vue'
 
 const mock = [
   {

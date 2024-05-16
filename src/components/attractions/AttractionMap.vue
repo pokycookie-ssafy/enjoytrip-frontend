@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ref } from 'vue'
-import KakaoMap from './KakaoMap.vue'
+import KakaoMap from '@/components/ui/KakaoMap.vue'
 
 const props = defineProps<{
   locationName: string

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { IAttraction } from '@/types/Attraction'
-import StarRating from './StarRating.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 
 const props = defineProps<{
   attraction: IAttraction | null
