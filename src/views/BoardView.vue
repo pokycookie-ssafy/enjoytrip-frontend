@@ -13,14 +13,14 @@ const data: IBoard[] = [
   {
     title:
       'this is test title this is test title this is test title this is test title this is test title this is test title this is test title this is test title this is test title this is test title this is test title this is test title',
-    writer: 'user1',
-    register: new Date(),
+    writer: '관리자',
+    register: new Date(2024, 5, 11),
     isNotice: true,
   },
   {
     title: 'this is test title',
-    writer: 'user1',
-    register: new Date(),
+    writer: '관리자',
+    register: new Date(2024, 5, 13),
     isNotice: true,
   },
   {
@@ -100,9 +100,9 @@ const data: IBoard[] = [
 
 <template>
   <main class="w-vw p-24 flex justify-center">
-    <section class="flex gap-4 w-full max-w-[800px]">
-      <BoardNav class="md:flex hidden" />
-      <ul class="flex flex-col gap-4 flex-1 overflow-hidden">
+    <section class="flex flex-col w-full max-w-[800px]">
+      <BoardNav />
+      <ul class="flex flex-col flex-1 overflow-hidden divide-y">
         <BoardLi
           v-for="e in data"
           :title="e.title"
