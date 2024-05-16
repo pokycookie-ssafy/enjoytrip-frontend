@@ -9,7 +9,7 @@ import axios from 'axios'
 import type { ISido } from '@/types/SidoGugun'
 import AttractionCategoryLabel from './AttractionCategoryLabel.vue'
 import AttractionStarRating from './AttractionStarRating.vue'
-import type { IContentType } from '@/types/contentType'
+import type { IContentType } from '@/types/ContentType'
 import ReviewPreviewCard from './ReviewPreviewCard.vue'
 import AttractionMap from './AttractionMap.vue'
 

@@ -4,7 +4,7 @@ import Button from './Button.vue'
 import CheckBox from './CheckBox.vue'
 import axios from 'axios'
 import AreaSelect from './AreaSelect.vue'
-import type { IContentType } from '@/types/contentType'
+import type { IContentType } from '@/types/ContentType'
 
 const category = ref<IContentType[]>([])
 const selected = ref<Set<number>>(new Set())

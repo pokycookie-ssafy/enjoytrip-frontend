@@ -1,5 +1,3 @@
-export type TContentCode = 'A01' | 'A02' | 'A03' | 'A04' | 'A05' | 'B02' | 'C01'
-
 export interface IAttraction {
   contentId: number
   contentType: number

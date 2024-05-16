@@ -10,6 +10,8 @@ import FindUserEmailForm from '@/views/FindUserEmailForm.vue'
 import FindUserPasswordForm from '@/views/FindUserPasswordForm.vue'
 import ReviewView from '@/views/ReviewView.vue'
 import AttractionView from '@/views/AttractionView.vue'
+import BoardDetailView from '@/views/BoardDetailView.vue'
+import BoardFormView from '@/views/BoardFormView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +35,18 @@ const router = createRouter({
       path: '/boards',
       name: 'board',
       component: BoardView,
+    },
+    {
+      path: '/boards/:id',
+      component: BoardDetailView,
+    },
+    {
+      path: '/boards/write',
+      component: BoardFormView,
+    },
+    {
+      path: '/boards/write/:id',
+      component: BoardFormView,
     },
     {
       path: '/map',
