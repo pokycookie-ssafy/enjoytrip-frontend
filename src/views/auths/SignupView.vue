@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Steps from '@/components/ui/Steps.vue'
 import SignupTermView from './SignupTermView.vue'
-import { ref } from 'vue'
 import SignupFormView from './SignupFormView.vue'
+import { ref } from 'vue'
 
 const stepLabels = ['약관동의', '회원정보입력', '가입완료']
 
