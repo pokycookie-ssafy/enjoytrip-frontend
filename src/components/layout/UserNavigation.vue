@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import Caption from '../ui/Caption.vue'
 import { useToastStore } from '@/stores/toast'
+import { makeID } from '@/utils/key'
 
 const hover = ref(false)
 
@@ -32,7 +33,7 @@ const mouseoutHandler = () => {
       >
         <button
           class="flex justify-center items-center w-10 h-10 rounded-full overflow-hidden bg-gray-800 border-gray-900 hover:bg-red-600"
-          @click="addToast('테스트 알림입니다. 잘 보이나요?')"
+          @click="addToast(makeID(32), 'danger')"
         >
           <FontAwesomeIcon icon="fa-solid fa-xmark" />
         </button>
