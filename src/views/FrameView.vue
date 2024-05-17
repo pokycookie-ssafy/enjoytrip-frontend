@@ -19,7 +19,7 @@ import ProfileImg from '@/components/ui/ProfileImg.vue'
     </section>
 
     <section
-      class="pb-4 border-zinc-300 flex flex-col justify-start items-center gap-4 border-b"
+      class="pb-4 border-zinc-300 flex flex-col justify-start items-center gap-2 border-b"
     >
       <Dropdown class="w-full" :placeholder="'계획을 선택해주세요'" autoClose>
         <button
@@ -29,7 +29,9 @@ import ProfileImg from '@/components/ui/ProfileImg.vue'
           내 여행 계획 {{ i }}
         </button>
       </Dropdown>
-      <Button class="ellipsis w-full">새 계획 만들기</Button>
+      <RouterLink class="w-full" :to="{ name: 'newPlan' }">
+        <Button class="ellipsis w-full"> 새 계획 만들기 </Button>
+      </RouterLink>
     </section>
 
     <section class="flex flex-col justify-start items-center gap-4"></section>

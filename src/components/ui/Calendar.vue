@@ -116,21 +116,21 @@ watch(
 
 <template>
   <section class="min-w-64 select-none overflow-hidden flex flex-col">
-    <div class="w-full h-8 flex justify-evenly items-center">
+    <div class="w-full h-8 flex justify-evenly items-center border-b">
       <button
-        class="text-zinc-500 text-xs w-11 h-full transition-all cursor-default hover:text-indigo-600 outline-none"
+        class="text-zinc-500 hover:bg-zinc-100 text-xs w-11 h-full transition-all hover:text-indigo-600 outline-none"
         @click="monthHandler(-1)"
       >
         <FontAwesomeIcon icon="fa-solid fa-angle-left" />
       </button>
       <button
-        class="text-zinc-700 text-sm w-full h-full transition-all cursor-default hover:text-indigo-600 outline-none"
+        class="text-zinc-700 hover:bg-zinc-100 text-sm flex-1 h-full transition-all hover:text-indigo-600 outline-none"
         @click="setToday()"
       >
         {{ year }}.{{ (month + 1).toString().padStart(2, '0') }}
       </button>
       <button
-        class="text-zinc-500 text-xs w-11 h-full transition-all cursor-default hover:text-indigo-600 outline-none"
+        class="text-zinc-500 hover:bg-zinc-100 text-xs w-11 h-full transition-all hover:text-indigo-600 outline-none"
         @click="monthHandler(1)"
       >
         <FontAwesomeIcon icon="fa-solid fa-angle-right" />
