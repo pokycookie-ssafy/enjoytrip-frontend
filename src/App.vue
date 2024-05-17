@@ -6,6 +6,7 @@ import VarticalFrame from './components/layout/VarticalFrame.vue'
 import FrameView from './views/FrameView.vue'
 import ModalAnchor from './components/modal/ModalAnchor.vue'
 import axios from 'axios'
+import Toast from './components/ui/Toast.vue'
 
 onBeforeMount(() => {
   const HOST = import.meta.env.VITE_KAKAO_APP_HOST
@@ -30,5 +31,6 @@ onMounted(() => {
     <FrameView />
   </VarticalFrame>
   <UserNavigation />
+  <Toast />
   <ModalAnchor />
 </template>

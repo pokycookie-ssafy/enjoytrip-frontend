@@ -29,3 +29,20 @@
 .modal-leave-to .modal--window {
   transform: translateY(30px);
 }
+
+/* toast */
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s;
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translateX(-30%);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(-70%);
+}

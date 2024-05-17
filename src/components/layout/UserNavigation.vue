@@ -3,10 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import Caption from '../ui/Caption.vue'
+import { useToastStore } from '@/stores/toast'
 
 const hover = ref(false)
 
-const data = []
+const { addToast } = useToastStore()
 
 const mouseoverHandler = () => {
   hover.value = true
@@ -31,6 +32,7 @@ const mouseoutHandler = () => {
       >
         <button
           class="flex justify-center items-center w-10 h-10 rounded-full overflow-hidden bg-gray-800 border-gray-900 hover:bg-red-600"
+          @click="addToast('테스트 알림입니다. 잘 보이나요?')"
         >
           <FontAwesomeIcon icon="fa-solid fa-xmark" />
         </button>
