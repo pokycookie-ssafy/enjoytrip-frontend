@@ -3,14 +3,22 @@ import Button from '@/components/ui/Button.vue'
 import Comment from '@/components/ui/Comment.vue'
 import CommentInput from '@/components/ui/CommentInput.vue'
 import Like from '@/components/ui/Like.vue'
+import Pagination from '@/components/ui/Pagination.vue'
 import ProfileImg from '@/components/ui/ProfileImg.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { QuillEditor } from '@vueup/vue-quill'
+import { ref } from 'vue'
 
 /*
 TODO
 api/boards/:id 요청하도록 수정
 */
+
+const pageIdx = ref(1)
+
+const paginationHandler = (idx: number) => {
+  pageIdx.value = idx
+}
 </script>
 
 <template>
@@ -108,6 +116,17 @@ api/boards/:id 요청하도록 수정
           />
           <Comment writer="user1" content="Please help me" :time="new Date()" />
         </ul>
+        <!-- comment count <= 15이면 표시 X -->
+        <div class="w-full flex justify-center">
+          <Pagination
+            :idx="pageIdx"
+            :countPerPage="15"
+            :totalCount="178"
+            @onClick="paginationHandler"
+            @onPrev="paginationHandler"
+            @onNext="paginationHandler"
+          />
+        </div>
       </section>
     </article>
   </main>

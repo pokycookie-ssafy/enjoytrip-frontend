@@ -10,6 +10,7 @@ import Comment from '@/components/ui/Comment.vue'
 import AttractionReviewCard from '@/components/reviews/AttractionReviewCard.vue'
 import type { IAttraction } from '@/types/Attraction'
 import axios from 'axios'
+import Pagination from '../ui/Pagination.vue'
 
 const props = defineProps<{
   content: string
@@ -20,6 +21,11 @@ const props = defineProps<{
 
 const commentOpen = ref(false)
 const mockAttraction = ref<IAttraction | null>(null)
+const pageIdx = ref(1)
+
+const paginationHandler = (idx: number) => {
+  pageIdx.value = idx
+}
 
 const timeString = computed(() => {
   return dayjs(props.time).format('YY.MM.DD HH:mm')
@@ -102,6 +108,17 @@ onMounted(async () => {
         />
         <Comment writer="user1" content="Please help me" :time="new Date()" />
       </ul>
+      <!-- comment count <= 15이면 표시 X -->
+      <div class="w-full flex justify-center">
+        <Pagination
+          :idx="pageIdx"
+          :countPerPage="15"
+          :totalCount="178"
+          @onClick="paginationHandler"
+          @onPrev="paginationHandler"
+          @onNext="paginationHandler"
+        />
+      </div>
     </section>
   </li>
 </template>

@@ -11,6 +11,7 @@ import AttractionStarRating from '@/components/attractions/AttractionStarRating.
 import ReviewPreviewCard from '@/components/attractions/ReviewPreviewCard.vue'
 import AttractionMap from '@/components/attractions/AttractionMap.vue'
 import type { IContentType } from '@/types/ContentType'
+import Pagination from '../ui/Pagination.vue'
 
 const props = defineProps<{
   data: IAttraction
@@ -23,6 +24,11 @@ const gugunName = ref('')
 const icon = ref<string | null>(null)
 
 const mockStarData = ref<number[]>([])
+const pageIdx = ref(1)
+
+const paginationHandler = (idx: number) => {
+  pageIdx.value = idx
+}
 
 watch(
   () => props.data,
@@ -111,6 +117,17 @@ onMounted(() => {
       <ul class="flex flex-col gap-2">
         <ReviewPreviewCard v-for="i in 5" :key="i" />
       </ul>
+      <!-- comment count <= 15이면 표시 X -->
+      <div class="w-full flex justify-center">
+        <Pagination
+          :idx="pageIdx"
+          :countPerPage="15"
+          :totalCount="178"
+          @onClick="paginationHandler"
+          @onPrev="paginationHandler"
+          @onNext="paginationHandler"
+        />
+      </div>
     </section>
   </li>
 </template>
