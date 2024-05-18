@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from '@/components/ui/Button.vue'
 import Comment from '@/components/ui/Comment.vue'
 import CommentInput from '@/components/ui/CommentInput.vue'
 import Like from '@/components/ui/Like.vue'
@@ -13,7 +14,12 @@ api/boards/:id 요청하도록 수정
 </script>
 
 <template>
-  <main class="w-vw p-24 flex justify-center">
+  <main class="w-vw p-24 flex flex-col items-center">
+    <!-- v:if isOwner == true -->
+    <div class="w-full max-w-[800px] flex gap-2 pb-2">
+      <Button type="light">수정</Button>
+      <Button type="light">삭제</Button>
+    </div>
     <article class="flex flex-col w-full max-w-[800px] rounded border p-4">
       <section class="p-3 flex flex-col gap-2 border-b">
         <RouterLink

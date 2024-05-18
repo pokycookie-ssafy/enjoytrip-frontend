@@ -65,11 +65,11 @@ const dateHandler = (start: Date, end: Date) => {
           <FontAwesomeIcon icon="fa-regular fa-calendar-check" />
           <p>{{ dateFormat }}</p>
         </div>
+        <InfoBox
+          title="Tip"
+          content="날짜를 드래그하면 여러 날짜를 선택할 수 있습니다."
+        />
       </section>
-      <InfoBox
-        title="Tip"
-        content="계획 날짜는 이후 언제든 변경할 수 있습니다."
-      />
       <Button>계획 만들기</Button>
     </article>
   </main>

@@ -6,4 +6,6 @@ export interface IBoard {
   updated: Date
   readCount: number
   likeCount: number
+  commentCount: number
+  isOwner: boolean
 }

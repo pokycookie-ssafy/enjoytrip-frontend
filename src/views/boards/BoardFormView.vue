@@ -7,18 +7,12 @@ import { QuillEditor } from '@vueup/vue-quill'
 import axios from 'axios'
 import ImageUploader from 'quill-image-uploader'
 import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 interface IUploadedImage {
   file: File
   url: string
 }
-
-const router = useRouter()
-
-const title = ref('')
-const content = ref('')
-const uploadFiles = ref<IUploadedImage[]>([])
 
 const quillToolbarOptions = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -36,6 +30,41 @@ const quillModuleOptions = {
   },
 }
 
+/*
+TODO
+- 새 글 등록인지, 기존 글 수정인지 확인
+*/
+
+const route = useRoute()
+const router = useRouter()
+
+const title = ref('')
+const content = ref('')
+const uploadFiles = ref<IUploadedImage[]>([])
+
+const boardId = ref<number | null>(null)
+
+const updateHandler = async () => {
+  const formData = new FormData()
+
+  formData.append('title', title.value)
+  formData.append('content', content.value)
+  uploadFiles.value.forEach((upload) => {
+    formData.append('images', upload.file)
+  })
+
+  try {
+    const { data } = await axios.patch(`/boards/${boardId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    router.push({ path: `boards/${data.id}` })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 const sumbmitHandler = async () => {
   const formData = new FormData()
 
@@ -48,11 +77,10 @@ const sumbmitHandler = async () => {
   try {
     const { data } = await axios.post('/boards', formData, {
       headers: {
-        'Content-Type': 'multiple/form-data',
+        'Content-Type': 'multipart/form-data',
       },
     })
-    console.log(data)
-    router.push({ name: 'board' })
+    router.push({ path: `boards/${data.id}` })
   } catch (err) {
     console.error(err)
   }
@@ -95,6 +123,32 @@ const deleteFileHandler = (index: number) => {
   tmpUploadFiles.splice(index, 1)
   uploadFiles.value = tmpUploadFiles
 }
+
+watch(boardId, async (id) => {
+  try {
+    if (!id) return
+    const { data } = await axios.get(`/boards/${id}`)
+    // title.value = data.title
+    // content.value = data.content
+    title.value = '수정하기 제목'
+    content.value = '수정하기 내용'
+  } catch (err) {
+    console.error(err)
+  }
+})
+
+watch(
+  () => route.params,
+  (params) => {
+    if (!params?.id) boardId.value = null
+    else if (Array.isArray(params.id)) boardId.value = null
+    else {
+      const id = parseInt(params.id)
+      boardId.value = isNaN(id) ? null : id
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -110,7 +164,7 @@ const deleteFileHandler = (index: number) => {
             >자유게시판</RouterLink
           >
           <FontAwesomeIcon class="text-sm" icon="fa-solid fa-angle-right" />
-          <p>글쓰기</p>
+          <p>{{ boardId ? '수정하기' : '글쓰기' }}</p>
         </span>
       </div>
       <input
@@ -145,7 +199,12 @@ const deleteFileHandler = (index: number) => {
         </div>
       </div>
       <div class="pt-4">
-        <Button class="w-full" @onClick="sumbmitHandler">등록</Button>
+        <Button v-if="!boardId" class="w-full" @onClick="sumbmitHandler"
+          >등록</Button
+        >
+        <Button v-if="boardId" class="w-full" @onClick="updateHandler"
+          >수정</Button
+        >
       </div>
     </section>
   </main>
