@@ -54,7 +54,9 @@ watch(
   () => props.default,
   () => {
     input.value = props.default ?? ''
-  }
+    inputShow.value = props.default ?? ''
+  },
+  { immediate: true }
 )
 </script>
 

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onBeforeMount, onMounted } from 'vue'
+import { onBeforeMount } from 'vue'
 import Header from './components/layout/Header.vue'
 import UserNavigation from './components/layout/UserNavigation.vue'
 import VarticalFrame from './components/layout/VarticalFrame.vue'
-import FrameView from './views/FrameView.vue'
+import FrameView from './views/frame/FrameView.vue'
 import ModalAnchor from './components/modal/ModalAnchor.vue'
-import axios from 'axios'
 import Toast from './components/ui/Toast.vue'
+import AttractionDnD from './components/plan/AttractionDnD.vue'
 
 onBeforeMount(() => {
   const HOST = import.meta.env.VITE_KAKAO_APP_HOST
@@ -16,11 +16,6 @@ onBeforeMount(() => {
   const script = document.createElement('script')
   script.src = HOST + KEY + QUERY
   document.head.appendChild(script)
-})
-
-onMounted(() => {
-  // axios.defaults.baseURL = '/api'
-  axios.defaults.headers.post['Content-Type'] = 'aplication/json'
 })
 </script>
 
@@ -33,4 +28,5 @@ onMounted(() => {
   <UserNavigation />
   <Toast />
   <ModalAnchor />
+  <AttractionDnD />
 </template>

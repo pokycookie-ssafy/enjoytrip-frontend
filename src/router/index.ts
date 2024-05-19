@@ -13,6 +13,7 @@ import AttractionView from '@/views/attractions/AttractionView.vue'
 import BoardDetailView from '@/views/boards/BoardDetailView.vue'
 import BoardFormView from '@/views/boards/BoardFormView.vue'
 import NewPlanView from '@/views/plans/NewPlanView.vue'
+import PlanDetailView from '@/views/plans/PlanDetailView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -90,6 +91,10 @@ const router = createRouter({
       path: '/plans/new',
       name: 'newPlan',
       component: NewPlanView,
+    },
+    {
+      path: '/plans/:id',
+      component: PlanDetailView,
     },
   ],
 })

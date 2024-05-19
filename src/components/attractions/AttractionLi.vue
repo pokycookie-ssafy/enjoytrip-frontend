@@ -12,16 +12,22 @@ import ReviewPreviewCard from '@/components/attractions/ReviewPreviewCard.vue'
 import AttractionMap from '@/components/attractions/AttractionMap.vue'
 import type { IContentType } from '@/types/ContentType'
 import Pagination from '../ui/Pagination.vue'
+import Button from '../ui/Button.vue'
+import { usePlanStore } from '@/stores/plan'
+import areaCode from '@/assets/data/areaCode'
+import contentType from '@/assets/data/contentType'
 
 const props = defineProps<{
   data: IAttraction
 }>()
 
+const planStore = usePlanStore()
+
 const reviewOpen = ref(false)
 
 const sidoName = ref('')
 const gugunName = ref('')
-const icon = ref<string | null>(null)
+const icon = ref<string>('')
 
 const mockStarData = ref<number[]>([])
 const pageIdx = ref(1)
@@ -32,15 +38,10 @@ const paginationHandler = (idx: number) => {
 
 watch(
   () => props.data,
-  async () => {
-    const { data: area } = await axios.get<ISido[]>('/areaCode.json')
-    const { data: category } = await axios.get<IContentType[]>(
-      '/contentType.json'
-    )
-
-    const sido = area.find((e) => e.code === props.data.sidoCode)
+  () => {
+    const sido = areaCode.find((e) => e.code === props.data.sidoCode)
     const gugun = sido?.details.find((e) => e.code === props.data.gugunCode)
-    const content = category.find((e) => e.code === props.data.contentType)
+    const content = contentType.find((e) => e.code === props.data.contentType)
 
     sidoName.value = sido?.name ?? ''
     gugunName.value = gugun?.name ?? ''
@@ -71,7 +72,7 @@ onMounted(() => {
   <li
     class="w-full flex flex-col p-5 gap-5 text-sm text-zinc-500 rounded border shadow-sm relative"
   >
-    <AttractionCategoryLabel :icon="icon" />
+    <AttractionCategoryLabel class="right-4" :icon="icon" />
     <div class="flex justify-between items-start">
       <div class="flex flex-col gap-1">
         <h2 class="text-zinc-600 font-medium text-lg flex-1 ellipsis">
@@ -95,21 +96,26 @@ onMounted(() => {
       <AttractionStarRating :data="mockStarData" />
     </div>
 
-    <div class="flex pl-1 pr-1 gap-5">
-      <button
-        class="flex justify-normal items-center gap-1 hover:text-indigo-600"
+    <div class="flex justify-between items-center">
+      <div class="flex pl-1 pr-1 gap-5">
+        <button
+          class="flex justify-normal items-center gap-1 hover:text-indigo-600"
+        >
+          <Like :value="false" />
+          <p class="text-xs">좋아요 (56)</p>
+        </button>
+        <button
+          class="flex justify-normal items-center gap-1 hover:text-indigo-600 data-[open=true]:text-indigo-600 data-[open=true]:hover:text-indigo-500"
+          @click="reviewOpen = !reviewOpen"
+          :data-open="reviewOpen"
+        >
+          <FontAwesomeIcon icon="fa-regular fa-star" />
+          <p class="text-xs">리뷰 (1624)</p>
+        </button>
+      </div>
+      <Button @onClick="planStore.addAttraction(props.data)"
+        >내 계획에 추가</Button
       >
-        <Like :value="false" />
-        <p class="text-xs">좋아요 (56)</p>
-      </button>
-      <button
-        class="flex justify-normal items-center gap-1 hover:text-indigo-600 data-[open=true]:text-indigo-600 data-[open=true]:hover:text-indigo-500"
-        @click="reviewOpen = !reviewOpen"
-        :data-open="reviewOpen"
-      >
-        <FontAwesomeIcon icon="fa-regular fa-star" />
-        <p class="text-xs">리뷰 (1624)</p>
-      </button>
     </div>
 
     <!-- comment section -->

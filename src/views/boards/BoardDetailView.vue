@@ -7,25 +7,47 @@ import Pagination from '@/components/ui/Pagination.vue'
 import ProfileImg from '@/components/ui/ProfileImg.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { QuillEditor } from '@vueup/vue-quill'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 /*
 TODO
 api/boards/:id 요청하도록 수정
 */
 
+const route = useRoute()
+const router = useRouter()
+
 const pageIdx = ref(1)
+const boardId = ref<number | null>(null)
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
 }
+
+const editHandler = () => {
+  router.push(`/boards/write/${boardId.value}`)
+}
+
+watch(
+  () => route.params,
+  (params) => {
+    if (!params?.id) boardId.value = null
+    else if (Array.isArray(params.id)) boardId.value = null
+    else {
+      const id = parseInt(params.id)
+      boardId.value = isNaN(id) ? null : id
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
   <main class="w-vw p-24 flex flex-col items-center">
     <!-- v:if isOwner == true -->
     <div class="w-full max-w-[800px] flex gap-2 pb-2">
-      <Button type="light">수정</Button>
+      <Button @onClick="editHandler" type="light">수정</Button>
       <Button type="light">삭제</Button>
     </div>
     <article class="flex flex-col w-full max-w-[800px] rounded border p-4">

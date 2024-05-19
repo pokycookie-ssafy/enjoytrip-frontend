@@ -11,6 +11,10 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { QuillEditor } from '@vueup/vue-quill'
+import axios from 'axios'
+
+// axios.defaults.baseURL = '/api'
+axios.defaults.headers.post['Content-Type'] = 'aplication/json'
 
 library.add(fas)
 library.add(far)

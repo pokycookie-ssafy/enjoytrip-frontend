@@ -34,7 +34,7 @@ const submitHandler = async () => {
     // const { data } = await axios.post('/plans', planRequest)
     // const id = data.id;
     const id = Math.round(Math.random() * 10000) // mock
-    planStore.createPlan({ ...planRequest, id, attractions: [] })
+    planStore.createPlan({ ...planRequest, id, attractions: [], details: [] })
     // router.push({}) // 계획 페이지로 이동
     router.push('/') // mock
   } catch (err) {

@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
   <RouterLink
     class="flex flex-col gap-4 border bg-zinc-100 rounded p-3 hover:bg-zinc-200 hover:border-zinc-300 transition-colors"
-    :to="'#'"
+    :to="`/attractions/?id=${props.attraction?.contentId}`"
   >
     <div class="flex justify-between items-center gap-2">
       <h3 class="text-zinc-600 font-semibold text-base flex-1 ellipsis">
