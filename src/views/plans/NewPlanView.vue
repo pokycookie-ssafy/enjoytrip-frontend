@@ -2,9 +2,16 @@
 import Button from '@/components/ui/Button.vue'
 import Calendar from '@/components/ui/Calendar.vue'
 import InfoBox from '@/components/ui/InfoBox.vue'
+import { usePlanStore } from '@/stores/plan'
+import type { IPlanRequest } from '@/types/Plan'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import axios from 'axios'
 import dayjs from 'dayjs'
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const planStore = usePlanStore()
+const router = useRouter()
 
 const title = ref('')
 const startDate = ref(new Date())
@@ -15,6 +22,25 @@ const dateFormat = computed(() => {
   const end = dayjs(endDate.value).format('YYYY.MM.DD')
   return `${start} - ${end}`
 })
+
+const submitHandler = async () => {
+  try {
+    const planRequest: IPlanRequest = {
+      title: title.value,
+      startDate: startDate.value,
+      endDate: endDate.value,
+    }
+
+    // const { data } = await axios.post('/plans', planRequest)
+    // const id = data.id;
+    const id = Math.round(Math.random() * 10000) // mock
+    planStore.createPlan({ ...planRequest, id, attractions: [] })
+    // router.push({}) // 계획 페이지로 이동
+    router.push('/') // mock
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 const titleHandler = (e: Event) => {
   title.value = (e.target as HTMLInputElement)?.value ?? ''
@@ -56,6 +82,8 @@ const dateHandler = (start: Date, end: Date) => {
         </h3>
         <Calendar
           class="border rounded h-72 bg-white"
+          :start="startDate"
+          :end="endDate"
           @onChange="dateHandler"
           range
         />
@@ -70,7 +98,7 @@ const dateHandler = (start: Date, end: Date) => {
           content="날짜를 드래그하면 여러 날짜를 선택할 수 있습니다."
         />
       </section>
-      <Button>계획 만들기</Button>
+      <Button @onClick="submitHandler">계획 만들기</Button>
     </article>
   </main>
 </template>

@@ -10,7 +10,8 @@ dayjs.extend(isBetween)
 const dayArr = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
 const props = defineProps<{
-  default?: { start: Date; end: Date }
+  start: Date
+  end: Date
   range?: boolean
   border?: boolean
 }>()
@@ -19,15 +20,10 @@ const emits = defineEmits<{
   (e: 'onChange', start: Date, end: Date): void
 }>()
 
-const defaultStart = props.default?.start ?? new Date()
-const defaultEnd = props.default?.end ?? new Date()
-
-const year = ref(defaultStart.getFullYear())
-const month = ref(defaultEnd.getMonth())
+const year = ref(props.start.getFullYear())
+const month = ref(props.end.getMonth())
 const calendar = ref<ICalendar[]>([])
 
-const start = ref(defaultStart)
-const end = ref(defaultEnd)
 const dragStart = ref<Date | null>(null)
 const dragEnd = ref<Date | null>(null)
 
@@ -65,20 +61,14 @@ const cellMouseEnter = (cell: ICalendar) => {
 
 const cellMouseUp = (cell: ICalendar) => {
   if (!props.range) {
-    start.value = cell.date
-    end.value = cell.date
     emits('onChange', cell.date, cell.date)
     return
   }
 
   if (dragStart.value) {
-    if (dayjs(cell.date).isBefore(start.value, 'day')) {
-      start.value = cell.date
-      end.value = dragStart.value
-      emits('onChange', cell.date, start.value)
+    if (dayjs(cell.date).isBefore(dragStart.value, 'day')) {
+      emits('onChange', cell.date, dragStart.value)
     } else {
-      start.value = dragStart.value
-      end.value = cell.date
       emits('onChange', dragStart.value, cell.date)
     }
     dragStart.value = null
@@ -87,28 +77,9 @@ const cellMouseUp = (cell: ICalendar) => {
 }
 
 watch(
-  () => props.range,
-  () => {
-    if (!props.range) end.value = start.value
-  },
-  { immediate: true }
-)
-
-watch(
   [year, month],
   ([year, month]) => {
     calendar.value = dailyArr(year, month)
-  },
-  { immediate: true }
-)
-
-watch(
-  [start, end],
-  ([s, e]) => {
-    if (dayjs(s).isAfter(e)) {
-      start.value = e
-      end.value = s
-    }
   },
   { immediate: true }
 )
