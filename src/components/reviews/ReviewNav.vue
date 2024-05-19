@@ -1,23 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import axios from 'axios'
+import { ref } from 'vue'
 import Button from '@/components/ui/Button.vue'
 import CheckBox from '@/components/ui/CheckBox.vue'
 import AreaSelect from '@/components/ui/AreaSelect.vue'
 import type { IContentType } from '@/types/ContentType'
+import contentType from '@/assets/data/contentType'
 
-const category = ref<IContentType[]>([])
+const category = ref<IContentType[]>(contentType)
 const selected = ref<Set<number>>(new Set())
 
 const checkHandler = (checked: boolean, code: number) => {
   if (checked) selected.value.add(code)
   else selected.value.delete(code)
 }
-
-onMounted(async () => {
-  const { data } = await axios.get<IContentType[]>('/contentType.json')
-  category.value = data
-})
 </script>
 
 <template>

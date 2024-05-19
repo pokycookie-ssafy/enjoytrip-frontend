@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import term from '@/assets/data/term'
 import Button from '@/components/ui/Button.vue'
 import CheckBox from '@/components/ui/CheckBox.vue'
-import axios from 'axios'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
 const emits = defineEmits<{
   (e: 'onNext'): void
 }>()
 
-const serviceTerm = ref('')
-const personalTerm = ref('')
+const serviceTerm = ref(term.service)
+const personalTerm = ref(term.personal)
 
 const serviceCheck = ref(false)
 const personalCheck = ref(false)
@@ -17,12 +17,6 @@ const personalCheck = ref(false)
 const nextHandler = () => {
   if (serviceCheck.value && personalCheck.value) emits('onNext')
 }
-
-onMounted(async () => {
-  const { data } = await axios.get('/term.json')
-  serviceTerm.value = data.service
-  personalTerm.value = data.personal
-})
 </script>
 
 <template>

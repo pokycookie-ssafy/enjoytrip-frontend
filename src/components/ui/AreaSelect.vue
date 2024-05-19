@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import areaCode from '@/assets/data/areaCode'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import type { IArea, IGugun, ISido } from '@/types/SidoGugun'
-import axios from 'axios'
 import { computed, onMounted, ref, watch } from 'vue'
 
 const props = defineProps<{
@@ -11,13 +11,8 @@ const props = defineProps<{
 const sido = ref<IArea | null>(null)
 const gugun = ref<IArea | null>(null)
 
-const sidos = ref<ISido[]>([])
+const sidos = ref<ISido[]>(areaCode)
 const guguns = ref<IGugun[]>([])
-
-onMounted(async () => {
-  const { data } = await axios.get('/areaCode.json')
-  sidos.value = data
-})
 
 const sidoPlaceholder = computed(() => {
   if (sido.value) return sido.value.name
