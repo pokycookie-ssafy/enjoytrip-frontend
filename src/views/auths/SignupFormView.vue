@@ -2,9 +2,19 @@
 import Button from '@/components/ui/Button.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import Input from '@/components/ui/Input.vue'
+import type { IResponse } from '@/types/Response'
 import { getLastDate, getLastYear } from '@/utils/calendar'
 import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
+import axios from 'axios'
+import dayjs from 'dayjs'
 import { onMounted, ref, watch } from 'vue'
+
+const name = ref('')
+const nickname = ref('')
+const email = ref('')
+const password = ref('')
+const passwordCheck = ref('')
+const phone = ref('')
 
 const yearArr = ref<number[]>([])
 const monthArr = ref<number[]>([])
@@ -16,6 +26,27 @@ const birthDate = ref<number | null>(null)
 
 const gender = ref<string | null>(null)
 const agency = ref<string | null>(null)
+
+const submitHandler = async () => {
+  try {
+    const { data } = await axios.post<IResponse<any>>('/users', {
+      name: name.value,
+      nickname: nickname.value,
+      email: email.value,
+      password: password.value,
+      phone: phone.value,
+      birthday: `${birthYear.value
+        ?.toString()
+        .padStart(2, '0')}-${birthMonth.value
+        ?.toString()
+        .padStart(2, '0')}-${birthDate.value?.toString().padStart(2, '0')}`,
+      gender: gender.value,
+    })
+    console.log(data)
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 watch([birthYear, birthMonth], ([year, month]) => {
   if (!year || !month) return
@@ -52,14 +83,41 @@ onMounted(() => {
     <div class="flex sm:flex-row flex-col gap-2 w-full">
       <div class="flex flex-col gap-2 pt-4 pb-4 flex-1">
         <h3 class="text-indigo-600 font-semibold text-sm pl-1">회원정보</h3>
-        <Input class="w-full" label="이메일" />
-        <Input class="w-full" label="비밀번호" type="password" />
-        <Input class="w-full" label="비밀번호 확인" type="password" />
-        <Input class="w-full" label="닉네임" />
+        <Input
+          :value="email"
+          class="w-full"
+          label="이메일"
+          @onChange="(v) => (email = v)"
+        />
+        <Input
+          :value="password"
+          class="w-full"
+          label="비밀번호"
+          @onChange="(v) => (password = v)"
+          type="password"
+        />
+        <Input
+          :value="passwordCheck"
+          class="w-full"
+          label="비밀번호 확인"
+          @onChange="(v) => (passwordCheck = v)"
+          type="password"
+        />
+        <Input
+          :value="nickname"
+          class="w-full"
+          label="닉네임"
+          @onChange="(v) => (nickname = v)"
+        />
       </div>
       <div class="flex flex-col gap-2 pt-4 pb-4 flex-1">
         <h3 class="text-indigo-600 font-semibold text-sm pl-1">개인정보</h3>
-        <Input class="w-full" label="이름" />
+        <Input
+          class="w-full"
+          label="이름"
+          :value="name"
+          @onChange="(v) => (name = v)"
+        />
         <div class="flex gap-2">
           <Dropdown
             class="flex-1"
@@ -125,7 +183,9 @@ onMounted(() => {
           </Dropdown>
           <Input
             class="flex-1"
+            :value="phone"
             label="전화번호"
+            @onChange="(v) => (phone = v)"
             :encoder="telIncoder"
             :decoder="telDecoder"
             :rule="telRool"
@@ -133,6 +193,6 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <Button class="mt-12">다음</Button>
+    <Button class="mt-12" @onClick="submitHandler">다음</Button>
   </section>
 </template>

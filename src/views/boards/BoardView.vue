@@ -2,10 +2,11 @@
 import axios from 'axios'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { IBoard } from '@/types/Board'
+import type { IBoard, IBoardResponse } from '@/types/Board'
 import BoardLi from '@/components/boards/BoardLi.vue'
 import BoardNav from '@/components/boards/BoardNav.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import type { IResponse } from '@/types/Response'
 
 const route = useRoute()
 const router = useRouter()
@@ -13,23 +14,38 @@ const router = useRouter()
 const pageIdx = ref(1)
 const boards = ref<IBoard[]>([])
 const notices = ref<IBoard[]>([])
+const totalCount = ref(1)
 
 const getData = async () => {
   try {
-    const { data: boardData } = await axios.get<IBoard[]>('/api/boards.json')
-    const { data: noticeData } = await axios.get<IBoard[]>('/api/notices.json')
+    const { data } = await axios.get<IResponse<IBoardResponse>>(
+      `/boards?page=${pageIdx.value - 1}&size=${15}`
+    )
+    // const { data: noticeData } = await axios.get<IBoard[]>('/notices.json')
 
+    console.log(data)
+    const boardData = data.data.content
     const tmpBoard: IBoard[] = []
     boardData.forEach((e) => {
-      tmpBoard.push({ ...e, updated: new Date(e.updated) })
+      tmpBoard.push({
+        id: e.id,
+        title: e.title,
+        writer: e.writer,
+        content: e.content,
+        updated: new Date(e.regDate),
+        readCount: e.readcount,
+        likeCount: e.likecount,
+        isOwner: true,
+      })
     })
     boards.value = tmpBoard
+    totalCount.value = data.data.totalElements
 
-    const tmpNotice: IBoard[] = []
-    noticeData.forEach((e) => {
-      tmpNotice.push({ ...e, updated: new Date(e.updated) })
-    })
-    notices.value = tmpNotice
+    // const tmpNotice: IBoard[] = []
+    // noticeData.forEach((e) => {
+    //   tmpNotice.push({ ...e, updated: new Date(e.updated) })
+    // })
+    // notices.value = tmpNotice
   } catch (err) {
     console.error(err)
   }
@@ -73,7 +89,7 @@ watch(
         <Pagination
           :idx="pageIdx"
           :countPerPage="15"
-          :totalCount="178"
+          :totalCount="totalCount"
           @onClick="paginationHandler"
           @onPrev="paginationHandler"
           @onNext="paginationHandler"

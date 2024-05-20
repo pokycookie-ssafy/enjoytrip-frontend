@@ -1,65 +1,52 @@
 <script setup lang="ts">
-import Button from '@/components/ui/Button.vue'
-import Input from '@/components/ui/Input.vue'
-import InputGroup from '@/components/ui/InputGroup.vue'
 import ProfileImg from '@/components/ui/ProfileImg.vue'
-import Toggle from '@/components/ui/Toggle.vue'
+import { useAuthStore } from '@/stores/authStore'
+import { useRoute } from 'vue-router'
+
+const authStore = useAuthStore()
+const route = useRoute()
+
+const menuArr = [
+  {
+    label: '내 프로필 보기',
+    href: '/mypage/profile',
+    name: 'profile',
+  },
+  {
+    label: '내 여행 계획 보기',
+    href: '/mypage/plans',
+    name: 'myplans',
+  },
+]
 </script>
 
 <template>
   <main class="w-vw h-screen flex">
     <section class="shadow w-80 p-8">
-      <div class="flex flex-col justify-start items-center p-5 border-b">
+      <div
+        class="flex flex-col justify-start items-center p-5 border-b"
+        v-if="authStore.user"
+      >
         <ProfileImg class="w-20 h-20" editable />
-        <h2 class="mt-2 text-xl font-semibold text-zinc-700">Cookie</h2>
-        <p class="text-sm text-zinc-400 font-light">cookie@ssafy.com</p>
+        <h2 class="mt-2 text-xl font-semibold text-zinc-700">
+          {{ authStore.user.nickname }}
+        </h2>
+        <p class="text-sm text-zinc-400 font-light">
+          {{ authStore.user.email }}
+        </p>
       </div>
+      <ul class="flex flex-col gap-2 pt-2 pb-2">
+        <RouterLink
+          class="w-full h-10 text-zinc-600 text-left border-l-4 p-2 pl-3 pr-3 ellipsis text-sm select-none data-[route=true]:border-indigo-600 data-[route=true]:text-indigo-600 hover:border-indigo-600 hover:text-indigo-600 transition-colors"
+          :data-route="route.path === e.href"
+          :to="{ name: e.name }"
+          v-for="e in menuArr"
+        >
+          {{ e.label }}
+        </RouterLink>
+      </ul>
     </section>
-    <section class="flex-1 flex justify-center overflow-y-auto">
-      <div class="flex flex-col gap-8 w-full max-w-[600px] h-fit pt-24 p-14">
-        <InputGroup>
-          <div class="flex items-center justify-start gap-4 pb-4 border-b mb-4">
-            <ProfileImg class="w-14 h-14" />
-            <span>
-              <h2 class="text-xl font-semibold text-zinc-700">Cookie</h2>
-              <p class="text-sm text-zinc-400 font-light">cookie@ssafy.com</p>
-            </span>
-          </div>
-          <Input class="" label="닉네임" />
-          <Input class="" label="이름" />
-          <Input class="" label="전화번호" />
-          <div class="flex justify-end mt-2">
-            <Button class="w-24">수정하기</Button>
-          </div>
-        </InputGroup>
-
-        <InputGroup>
-          <h3 class="font-semibold text-zinc-700 border-b pb-4">
-            비밀번호 변경
-          </h3>
-          <Input class="" label="기존 비밀번호" type="password" />
-          <Input class="" label="새 비밀번호" type="password" />
-          <Input class="" label="새 비밀번호 확인" type="password" />
-          <div class="flex justify-end mt-2">
-            <Button class="w-24">수정하기</Button>
-          </div>
-        </InputGroup>
-
-        <InputGroup>
-          <h3 class="font-semibold text-zinc-700 border-b pb-4">
-            프로모션 정보수신 동의
-          </h3>
-          <span class="flex justify-between text-zinc-700 pt-2 pb-2 text-sm">
-            <p>휴대전화 정보수신 동의</p>
-            <Toggle />
-          </span>
-          <span class="flex justify-between text-zinc-700 pt-2 pb-2 text-sm">
-            <p>이메일 정보수신 동의</p>
-            <Toggle />
-          </span>
-        </InputGroup>
-      </div>
-    </section>
+    <RouterView />
   </main>
 </template>
 

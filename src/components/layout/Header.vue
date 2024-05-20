@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import Button from '../ui/Button.vue'
 import { ref } from 'vue'
 
-const router = useRouter()
 const hover = ref(false)
 
 interface IHeaderLink {
@@ -12,16 +10,12 @@ interface IHeaderLink {
 }
 
 const links: IHeaderLink[] = [
-  { label: 'Home', name: 'home' },
-  { label: 'Board', name: 'board' },
-  { label: 'Map', name: 'map' },
-  { label: 'Review', name: 'review' },
-  { label: 'Attraction', name: 'attraction' },
+  { label: '홈', name: 'home' },
+  { label: '자유게시판', name: 'board' },
+  { label: '지도', name: 'map' },
+  { label: '리뷰', name: 'review' },
+  { label: '관광지', name: 'attraction' },
 ]
-
-const loginBtnHandler = () => {
-  router.push({ name: 'login' })
-}
 
 const mouseoverHandler = () => {
   hover.value = true
@@ -39,7 +33,7 @@ const mouseoutHandler = () => {
     :onMouseout="mouseoutHandler"
   >
     <section
-      class="w-full max-w-[500px] data-[hover=false]:-translate-y-20 data-[hover=false]:opacity-0 duration-300 transition-all h-16 rounded-md bg-gray-800 p-3 flex justify-between bg-opacity-80 text-white backdrop-blur-sm shadow-md"
+      class="w-fit max-w-[500px] data-[hover=false]:-translate-y-20 data-[hover=false]:opacity-0 duration-300 transition-all h-16 rounded-md bg-gray-800 p-3 flex justify-between bg-opacity-80 text-white backdrop-blur-sm shadow-md"
       :data-hover="hover"
     >
       <div class="flex gap-2 h-full">
@@ -51,9 +45,6 @@ const mouseoutHandler = () => {
         >
           {{ e.label }}
         </RouterLink>
-      </div>
-      <div class="flex gap-2">
-        <Button class="w-20" @onClick="loginBtnHandler">Login</Button>
       </div>
     </section>
   </header>

@@ -1,11 +1,38 @@
 export interface IBoard {
   id: number
   title: string
-  writer: number
+  writer: string
   content: string
   updated: Date
   readCount: number
   likeCount: number
-  commentCount: number
   isOwner: boolean
+  // commentCount: number
+}
+
+export interface IBoardResponse {
+  content: {
+    id: number
+    writer: string
+    title: string
+    content: string
+    likecount: number
+    readcount: number
+    regDate: string
+    updateDate: string
+  }[]
+  totalPages: number
+  totalElements: number
+}
+
+export interface IBoardDetailResponse {
+  id: number
+  writer: string
+  title: string
+  content: string
+  likecount: number
+  readcount: number
+  regDate: string
+  updateDate: string
+  mine: boolean
 }

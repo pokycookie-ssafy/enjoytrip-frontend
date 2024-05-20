@@ -3,10 +3,12 @@ import AttractionCard from '@/components/frame/AttractionCard.vue'
 import Button from '@/components/ui/Button.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import ProfileImg from '@/components/ui/ProfileImg.vue'
+import { useAuthStore } from '@/stores/authStore'
 import { usePlanStore } from '@/stores/plan'
 import { useToastStore } from '@/stores/toast'
 import { useRouter } from 'vue-router'
 
+const authStore = useAuthStore()
 const planStore = usePlanStore()
 const toast = useToastStore()
 const router = useRouter()
@@ -29,10 +31,17 @@ const detailPlanHandler = () => {
       class="p-2 pb-4 border-zinc-300 flex justify-start items-center gap-4 border-b select-none"
     >
       <ProfileImg class="w-14 h-14" />
-      <div>
-        <h3 class="text-xl font-semibold text-zinc-700">Cookie</h3>
-        <p class="text-sm text-zinc-400 font-light">cookie@ssafy.com</p>
+      <div v-if="authStore.user">
+        <h3 class="text-xl font-semibold text-zinc-700">
+          {{ authStore.user.nickname }}
+        </h3>
+        <p class="text-sm text-zinc-400 font-light">
+          {{ authStore.user.email }}
+        </p>
       </div>
+      <h3 v-if="!authStore.user" class="text-zinc-700 ellipsis">
+        로그인 해주세요
+      </h3>
     </section>
 
     <section

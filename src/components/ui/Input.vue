@@ -7,7 +7,7 @@ export interface IInputInfo {
 }
 
 const props = defineProps<{
-  default?: string
+  value: string
   label?: string
   type?: InputTypeHTMLAttribute
   info?: IInputInfo
@@ -21,13 +21,12 @@ const emits = defineEmits<{
   (e: 'onChange', value: string): void
 }>()
 
-const input = ref('')
 const inputShow = ref('')
 const focus = ref(false)
 const inputREF = ref<HTMLInputElement | null>(null)
 
 const isEmpty = computed(() => {
-  return input.value.length === 0
+  return props.value.length === 0
 })
 
 const keydownHandler = (e: KeyboardEvent) => {
@@ -36,9 +35,9 @@ const keydownHandler = (e: KeyboardEvent) => {
 
 const inputHandler = (e: Event) => {
   const targetValue = (e.target as HTMLInputElement).value
-  input.value = props.decoder ? props.decoder(targetValue) : targetValue
-  inputShow.value = props.encoder ? props.encoder(input.value) : input.value
-  emits('onChange', input.value)
+  const value = props.decoder ? props.decoder(targetValue) : targetValue
+  inputShow.value = props.encoder ? props.encoder(value) : value
+  emits('onChange', value)
 }
 
 const onFocus = () => {
@@ -51,10 +50,9 @@ const onBlur = () => {
 }
 
 watch(
-  () => props.default,
+  () => props.value,
   () => {
-    input.value = props.default ?? ''
-    inputShow.value = props.default ?? ''
+    inputShow.value = props.encoder ? props.encoder(props.value) : props.value
   },
   { immediate: true }
 )
@@ -62,9 +60,10 @@ watch(
 
 <template>
   <div
-    class="flex flex-col justify-center min-h-10 overflow-hidden border p-2 data-[focus=true]:border-indigo-600 rounded transition-all data-[status='success']:border-indigo-500 data-[status='warn']:border-yellow-500 data-[status='danger']:border-red-500"
+    class="flex flex-col justify-center min-h-10 overflow-hidden border p-2 data-[readonly=true]:bg-zinc-100 data-[focus=true]:border-indigo-600 rounded transition-all data-[status='success']:border-indigo-500 data-[status='warn']:border-yellow-500 data-[status='danger']:border-red-500"
     :data-focus="focus"
     :data-status="props.info?.status"
+    :data-readonly="props.readonly"
     @click="onFocus"
   >
     <label
@@ -75,11 +74,12 @@ watch(
       >{{ props.label }}</label
     >
     <input
-      class="outline-none h-6 data-[empty=true]:h-0 transition-all"
+      class="outline-none h-6 data-[empty=true]:h-0 transition-all data-[readonly=true]:bg-zinc-100"
       ref="inputREF"
       :type="props.type"
       :value="inputShow"
       :data-empty="isEmpty && !focus"
+      :data-readonly="props.readonly"
       @focus="onFocus"
       @blur="onBlur"
       @input="inputHandler"

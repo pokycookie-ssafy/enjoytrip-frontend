@@ -71,6 +71,7 @@ const mousedownHandler = (e: MouseEvent) => {
 
 <template>
   <button
+    v-if="offset.offsetX >= 0"
     class="absolute cursor-all-scroll select-none border rounded p-2 bg-zinc-100 border-zinc-200 hover:bg-zinc-200 hover:border-zinc-300 text-zinc-800"
     :style="`height: ${1.5 * offset.height}rem; width: ${
       dndStore.width

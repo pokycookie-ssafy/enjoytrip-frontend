@@ -14,6 +14,9 @@ import BoardDetailView from '@/views/boards/BoardDetailView.vue'
 import BoardFormView from '@/views/boards/BoardFormView.vue'
 import NewPlanView from '@/views/plans/NewPlanView.vue'
 import PlanDetailView from '@/views/plans/PlanDetailView.vue'
+import EditUserAccount from '@/views/users/EditUserAccount.vue'
+import { useAuthStore } from '@/stores/authStore'
+import MyPlansView from '@/views/users/MyPlansView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,11 +30,21 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (!authStore.user) next()
+        else next(from)
+      },
     },
     {
       path: '/signup',
       name: 'signup',
       component: SignupView,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (!authStore.user) next()
+        else next(from)
+      },
     },
     {
       path: '/boards',
@@ -71,11 +84,32 @@ const router = createRouter({
           component: FindUserPasswordForm,
         },
       ],
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (!authStore.user) next()
+        else next(from)
+      },
     },
     {
-      path: '/profile',
-      name: 'profile',
+      path: '/mypage',
       component: ProfileView,
+      children: [
+        {
+          path: 'profile',
+          name: 'profile',
+          component: EditUserAccount,
+        },
+        {
+          path: 'plans',
+          name: 'myplans',
+          component: MyPlansView,
+        },
+      ],
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.user) next()
+        else next({ name: 'login' })
+      },
     },
     {
       path: '/reviews',
@@ -91,10 +125,20 @@ const router = createRouter({
       path: '/plans/new',
       name: 'newPlan',
       component: NewPlanView,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.user) next()
+        else next({ name: 'login' })
+      },
     },
     {
       path: '/plans/:id',
       component: PlanDetailView,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.user) next()
+        else next({ name: 'login' })
+      },
     },
   ],
 })

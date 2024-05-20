@@ -5,8 +5,14 @@ import CommentInput from '@/components/ui/CommentInput.vue'
 import Like from '@/components/ui/Like.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import ProfileImg from '@/components/ui/ProfileImg.vue'
+import { useAuthStore } from '@/stores/authStore'
+import type { IBoardDetailResponse } from '@/types/Board'
+import type { IComment, ICommentResponse } from '@/types/Comment'
+import type { IResponse } from '@/types/Response'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { QuillEditor } from '@vueup/vue-quill'
+import axios from 'axios'
+import dayjs from 'dayjs'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -17,9 +23,17 @@ api/boards/:id 요청하도록 수정
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 
 const pageIdx = ref(1)
 const boardId = ref<number | null>(null)
+
+const title = ref('')
+const writer = ref('')
+const updated = ref(new Date())
+const content = ref('')
+const likecount = ref(0)
+const comments = ref<IComment[]>([])
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
@@ -27,6 +41,69 @@ const paginationHandler = (idx: number) => {
 
 const editHandler = () => {
   router.push(`/boards/write/${boardId.value}`)
+}
+
+const commentSubmitHandler = async (comment: string) => {
+  try {
+    if (!authStore.user) throw new Error()
+    const { data } = await axios.post(`/boards/comments`, {
+      userId: authStore.user.id,
+      content: comment,
+      boardId: boardId.value,
+      parentId: null,
+    })
+    console.log(data)
+    commentHandler()
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const commentHandler = async () => {
+  try {
+    const { data } = await axios.get<IResponse<ICommentResponse[]>>(
+      `/boards/comments/${boardId.value}`
+    )
+
+    const tmpComments: IComment[] = []
+    data.data.forEach((e) => {
+      tmpComments.push({
+        id: e.id,
+        writer: e.writer,
+        content: e.content,
+        created: new Date(e.commentCreatedDate),
+        isReply: false,
+      })
+      e.commentList.forEach((e) => {
+        tmpComments.push({
+          id: e.id,
+          writer: e.writer,
+          content: e.content,
+          created: new Date(e.commentCreatedDate),
+          isReply: true,
+        })
+      })
+    })
+    comments.value = tmpComments
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const axiosHandler = async () => {
+  try {
+    const userId = authStore.user?.id ?? null
+    const { data } = await axios.get<IResponse<IBoardDetailResponse>>(
+      `/boards/?id=${boardId.value}&writer=${userId}`
+    )
+    title.value = data.data.title
+    writer.value = data.data.writer
+    updated.value = new Date(data.data.regDate)
+    content.value = data.data.content
+    likecount.value = data.data.likecount
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 watch(
@@ -37,6 +114,10 @@ watch(
     else {
       const id = parseInt(params.id)
       boardId.value = isNaN(id) ? null : id
+      if (boardId.value) {
+        axiosHandler()
+        commentHandler()
+      }
     }
   },
   { immediate: true }
@@ -57,16 +138,14 @@ watch(
           :to="{ name: 'board' }"
           >자유게시판</RouterLink
         >
-        <h2 class="text-zinc-800 text-2xl font-semibold pb-2">
-          글 제목 입니다. 제목이라구욧!
-        </h2>
+        <h2 class="text-zinc-800 text-2xl font-semibold pb-2">{{ title }}</h2>
         <div class="flex justify-between items-end">
           <div class="flex items-center gap-2">
             <ProfileImg class="w-10 h-10" />
             <span class="flex flex-col justify-center">
-              <h2 class="h-5 flex items-center text-zinc-600">user1</h2>
+              <h2 class="h-5 flex items-center text-zinc-600">{{ writer }}</h2>
               <p class="h-5 flex items-center text-xs text-zinc-400 font-light">
-                2024.05.17
+                {{ dayjs(updated).format('YYYY.MM.DD HH:mm') }}
               </p>
             </span>
           </div>
@@ -86,7 +165,7 @@ watch(
         <QuillEditor
           theme="snow"
           readOnly
-          content="<h1>안녕하세요!</h1><p><br></p><p>게시글이 잘 작동하는지 확인하기 위한 게시글입니다.</p><p><br></p><h2>Where does it come from?</h2><p>'de Finibus Bonorum et Malorum' (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, 'Lorem ipsum dolor sit amet..', comes from a line in section 1.10.32.</p><blockquote class='ql-align-justify'>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of 'de Finibus Bonorum et Malorum' (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, 'Lorem ipsum dolor sit amet..', comes from a line in section 1.10.32.</blockquote><pre class='ql-syntax ql-align-justify' spellcheck='false'>The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from 'de Finibus Bonorum et Malorum' by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</pre><p><br></p>"
+          :content="content"
           contentType="html"
           :options="{ modules: { toolbar: false } }"
         />
@@ -98,7 +177,7 @@ watch(
         <button class="flex items-center gap-1">
           <Like :value="false" />
           <p>좋아요</p>
-          <p>21</p>
+          <p>{{ likecount }}</p>
         </button>
         <button class="flex items-center gap-1">
           <FontAwesomeIcon icon="fa-regular fa-comment" />
@@ -116,27 +195,16 @@ watch(
           <div class="w-9 h-9 flex justify-center items-center">
             <ProfileImg class="w-8 h-8" />
           </div>
-          <CommentInput />
+          <CommentInput @onSubmit="commentSubmitHandler" />
         </div>
         <ul class="flex flex-col items-end gap-2">
           <Comment
-            writer="user1"
-            content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-            :time="new Date()"
+            :writer="e.writer"
+            :content="e.content"
+            :time="e.created"
+            :isReply="e.isReply"
+            v-for="e in comments"
           />
-          <Comment
-            writer="user1"
-            content="Reply!!!"
-            :time="new Date()"
-            isReply
-          />
-          <Comment writer="user1" content="OK" :time="new Date()" isReply />
-          <Comment
-            writer="user1"
-            content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-            :time="new Date()"
-          />
-          <Comment writer="user1" content="Please help me" :time="new Date()" />
         </ul>
         <!-- comment count <= 15이면 표시 X -->
         <div class="w-full flex justify-center">

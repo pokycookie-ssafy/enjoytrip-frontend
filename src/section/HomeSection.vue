@@ -1,19 +1,10 @@
 <script setup lang="ts">
+import areaCode from '@/assets/data/areaCode'
 import bg from '@/assets/img/blue.jpg'
 import Typewriter from '@/components/ui/Typewriter.vue'
-import axios from 'axios'
 import { onMounted, ref } from 'vue'
 
 const areaArr = ref<string[]>([])
-
-interface IArea {
-  code: string
-  name: string
-  details: {
-    code: string
-    name: string
-  }[]
-}
 
 function shuffle(array: string[]) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -22,10 +13,9 @@ function shuffle(array: string[]) {
   }
 }
 
-onMounted(async () => {
-  const { data } = await axios.get<IArea[]>('/areaCode.json')
+onMounted(() => {
   const res: string[] = []
-  data.forEach((area) => {
+  areaCode.forEach((area) => {
     area.details.forEach((detail) => {
       res.push(`${area.name} ${detail.name}`)
     })

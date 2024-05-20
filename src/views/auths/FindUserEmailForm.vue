@@ -1,6 +1,25 @@
 <script setup lang="ts">
 import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
+import type { IResponse } from '@/types/Response'
+import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
+import axios from 'axios'
+import { ref } from 'vue'
+
+const name = ref('')
+const phone = ref('')
+
+const submitHandler = async () => {
+  try {
+    const { data } = await axios.post<IResponse<any>>('/users/findid', {
+      name: name.value,
+      phone: phone.value,
+    })
+    console.log(data)
+  } catch (err) {
+    console.error(err)
+  }
+}
 </script>
 
 <template>
@@ -8,8 +27,16 @@ import Input from '@/components/ui/Input.vue'
     아이디(이메일) 찾기
   </h2>
   <div class="flex flex-col gap-2">
-    <Input label="이름" />
-    <Input label="전화번호" type="tel" />
+    <Input label="이름" :value="name" @onChange="(v) => (name = v)" />
+    <Input
+      label="전화번호"
+      type="tel"
+      :value="phone"
+      @onChange="(v) => (phone = v)"
+      :encoder="telIncoder"
+      :decoder="telDecoder"
+      :rule="telRool"
+    />
   </div>
-  <Button class="">찾기</Button>
+  <Button @onClick="submitHandler">찾기</Button>
 </template>

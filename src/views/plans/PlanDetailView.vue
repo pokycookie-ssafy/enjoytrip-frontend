@@ -20,8 +20,8 @@ const endDate = ref(new Date())
 const attractions = ref<IAttraction[]>([])
 const details = ref<IPlanDetail[]>([])
 
-// const startDefault = ref(new Date())
-// const endDefault = ref(new Date())
+const viewStartDate = ref(new Date())
+const viewEndDate = ref(new Date())
 
 const addDetailHandler = (detail: IPlanDetail) => {
   const tmpDetails = [...details.value, detail]
@@ -45,9 +45,11 @@ const dateHandler = (start: Date, end: Date) => {
   endDate.value = dayjs(end).endOf('date').toDate()
 }
 
-// watch(details, (e) => {
-//   console.log(e)
-// })
+watch([startDate, endDate], ([s, e]) => {
+  viewStartDate.value = s
+  viewEndDate.value =
+    dayjs(e).diff(s, 'day') < 3 ? e : dayjs(s).add(2, 'day').toDate()
+})
 
 onMounted(() => {
   if (Array.isArray(route.params.id)) return
@@ -70,7 +72,7 @@ onMounted(() => {
     class="w-vw p-24 flex flex-col lg:flex-row justify-center items-center lg:items-start gap-4"
   >
     <section class="flex flex-col gap-2 mb-8 lg:w-[400px] w-full shrink-0">
-      <Input label="계획이름" :default="title" />
+      <Input label="계획이름" :value="title" @onChange="(v) => (title = v)" />
       <Calendar
         class="border rounded h-72 bg-white"
         :start="startDate"
@@ -89,9 +91,17 @@ onMounted(() => {
       </ul>
     </section>
     <section class="flex-1 w-full">
+      <div class="flex justify-between p-2 text-zinc-600">
+        <button class="w-6 h-6 hover:text-indigo-600">
+          <FontAwesomeIcon icon="fa-solid fa-angle-left" />
+        </button>
+        <button class="w-6 h-6 hover:text-indigo-600">
+          <FontAwesomeIcon icon="fa-solid fa-angle-right" />
+        </button>
+      </div>
       <TimeMapper
-        :start="startDate"
-        :end="endDate"
+        :start="viewStartDate"
+        :end="viewEndDate"
         :data="details"
         :addDetail="addDetailHandler"
         :deleteDetail="deleteDetailHandler"
