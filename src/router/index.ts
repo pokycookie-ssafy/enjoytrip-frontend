@@ -14,9 +14,14 @@ import BoardDetailView from '@/views/boards/BoardDetailView.vue'
 import BoardFormView from '@/views/boards/BoardFormView.vue'
 import NewPlanView from '@/views/plans/NewPlanView.vue'
 import PlanDetailView from '@/views/plans/PlanDetailView.vue'
-import EditUserAccount from '@/views/users/EditUserAccount.vue'
+import EditUserAccount from '@/views/users/EditProfileView.vue'
 import { useAuthStore } from '@/stores/authStore'
 import MyPlansView from '@/views/users/MyPlansView.vue'
+import MyPostsView from '@/views/users/MyPostsView.vue'
+import MyCommentsView from '@/views/users/MyCommentsView.vue'
+import MyLikePostsView from '@/views/users/MyLikePostsView.vue'
+import MyLikeReviewsView from '@/views/users/MyLikeReviewsView.vue'
+import MyLikeAttractionsView from '@/views/users/MyLikeAttractionsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -104,12 +109,37 @@ const router = createRouter({
           name: 'myplans',
           component: MyPlansView,
         },
+        {
+          path: 'posts',
+          name: 'myPosts',
+          component: MyPostsView,
+        },
+        {
+          path: 'comments',
+          name: 'myComments',
+          component: MyCommentsView,
+        },
+        {
+          path: 'likePosts',
+          name: 'myLikePosts',
+          component: MyLikePostsView,
+        },
+        {
+          path: 'likeAttractions',
+          name: 'myLikeAttractions',
+          component: MyLikeAttractionsView,
+        },
+        {
+          path: 'likeReviews',
+          name: 'myLikeReviews',
+          component: MyLikeReviewsView,
+        },
       ],
-      beforeEnter: (to, from, next) => {
-        const authStore = useAuthStore()
-        if (authStore.user) next()
-        else next({ name: 'login' })
-      },
+      // beforeEnter: (to, from, next) => {
+      //   const authStore = useAuthStore()
+      //   if (authStore.user) next()
+      //   else next({ name: 'login' })
+      // },
     },
     {
       path: '/reviews',
@@ -125,20 +155,20 @@ const router = createRouter({
       path: '/plans/new',
       name: 'newPlan',
       component: NewPlanView,
-      beforeEnter: (to, from, next) => {
-        const authStore = useAuthStore()
-        if (authStore.user) next()
-        else next({ name: 'login' })
-      },
+      // beforeEnter: (to, from, next) => {
+      //   const authStore = useAuthStore()
+      //   if (authStore.user) next()
+      //   else next({ name: 'login' })
+      // },
     },
     {
       path: '/plans/:id',
       component: PlanDetailView,
-      beforeEnter: (to, from, next) => {
-        const authStore = useAuthStore()
-        if (authStore.user) next()
-        else next({ name: 'login' })
-      },
+      // beforeEnter: (to, from, next) => {
+      //   const authStore = useAuthStore()
+      //   if (authStore.user) next()
+      //   else next({ name: 'login' })
+      // },
     },
   ],
 })

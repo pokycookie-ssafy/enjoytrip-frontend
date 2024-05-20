@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AttractionDnDCard from '@/components/plan/AttractionDnDCard .vue'
+import PlanResult from '@/components/plan/PlanResult.vue'
 import TimeMapper from '@/components/plan/TimeMapper.vue'
 import Calendar from '@/components/ui/Calendar.vue'
 import Input from '@/components/ui/Input.vue'
@@ -89,6 +90,9 @@ onMounted(() => {
       <ul class="flex flex-col flex-1 gap-2 w-full overflow-y-auto">
         <AttractionDnDCard v-for="e in planStore.plan?.attractions" :data="e" />
       </ul>
+      <div class="w-full border p-3 rounded">
+        <PlanResult :plans="details" />
+      </div>
     </section>
     <section class="flex-1 w-full">
       <div class="flex justify-between p-2 text-zinc-600">

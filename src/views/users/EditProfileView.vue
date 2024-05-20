@@ -62,12 +62,12 @@ onMounted(async () => {
       <InputGroup>
         <div class="flex items-center justify-start gap-4 pb-4 border-b mb-4">
           <ProfileImg class="w-14 h-14" />
-          <span v-if="authStore.user">
+          <span>
             <h2 class="text-xl font-semibold text-zinc-700">
-              {{ authStore.user.nickname }}
+              {{ authStore?.user?.nickname ?? 'nickname' }}
             </h2>
             <p class="text-sm text-zinc-400 font-light">
-              {{ authStore.user.email }}
+              {{ authStore?.user?.email ?? 'email' }}
             </p>
           </span>
         </div>
