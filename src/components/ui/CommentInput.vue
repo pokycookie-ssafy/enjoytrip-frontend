@@ -16,6 +16,8 @@ const changeController = (e: KeyboardEvent) => {
     inputREF.value.innerText = ''
   }
 }
+
+defineExpose({ inputREF })
 </script>
 
 <template>
@@ -26,6 +28,7 @@ const changeController = (e: KeyboardEvent) => {
     @keydown="changeController"
     @focus="inFocus = true"
     @blur="inFocus = false"
+    tabindex="0"
     contenteditable
   ></p>
 </template>

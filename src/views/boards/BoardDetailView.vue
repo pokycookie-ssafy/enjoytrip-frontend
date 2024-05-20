@@ -16,11 +16,6 @@ import dayjs from 'dayjs'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-/*
-TODO
-api/boards/:id 요청하도록 수정
-*/
-
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
@@ -197,13 +192,31 @@ watch(
           </div>
           <CommentInput @onSubmit="commentSubmitHandler" />
         </div>
-        <ul class="flex flex-col items-end gap-2">
+        <ul v-if="boardId" class="flex flex-col items-end gap-2">
           <Comment
             :writer="e.writer"
             :content="e.content"
             :time="e.created"
             :isReply="e.isReply"
+            :boardId="boardId"
+            :commentHandler="commentHandler"
             v-for="e in comments"
+          />
+          <Comment
+            :writer="'admin'"
+            :content="'test'"
+            :time="new Date()"
+            :isReply="false"
+            :boardId="boardId"
+            :commentHandler="commentHandler"
+          />
+          <Comment
+            :writer="'admin'"
+            :content="'test'"
+            :time="new Date()"
+            :isReply="true"
+            :boardId="boardId"
+            :commentHandler="commentHandler"
           />
         </ul>
         <!-- comment count <= 15이면 표시 X -->

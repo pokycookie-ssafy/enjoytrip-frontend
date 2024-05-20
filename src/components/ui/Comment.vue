@@ -1,19 +1,63 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import ProfileImg from './ProfileImg.vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import CommentInput from './CommentInput.vue'
+import { useAuthStore } from '@/stores/authStore'
+import axios from 'axios'
 
 const props = defineProps<{
   writer: string
   content: string
   time: Date
+  boardId: number
   isReply?: boolean
+  commentHandler: () => void
 }>()
+
+const authStore = useAuthStore()
+
+const startReply = ref(false)
+const replyREF = ref<any | null>(null)
 
 const timeString = computed(() => {
   return dayjs(props.time).format('YY.MM.DD HH:mm')
 })
+
+const endReplyHandler = () => {
+  const ref = replyREF.value.inputREF as HTMLInputElement
+  if (ref.innerText.length > 0) return
+  startReply.value = false
+  window.removeEventListener('click', endReplyHandler)
+}
+
+const replyHandler = () => {
+  if (!replyREF.value) return
+  startReply.value = true
+
+  setTimeout(() => {
+    const ref = replyREF.value.inputREF as HTMLInputElement
+    ref.focus()
+    ref.addEventListener('blur', endReplyHandler)
+  }, 10)
+}
+
+const commentSubmitHandler = async (comment: string) => {
+  try {
+    if (!authStore.user) throw new Error()
+    const { data } = await axios.post(`/boards/comments`, {
+      userId: authStore.user.id,
+      content: comment,
+      boardId: props.boardId,
+      parentId: null,
+    })
+    console.log(data)
+    props.commentHandler()
+  } catch (err) {
+    console.error(err)
+  }
+}
 </script>
 
 <template>
@@ -29,7 +73,11 @@ const timeString = computed(() => {
           <p class="text-xs text-zinc-400 font-light">{{ timeString }}</p>
         </span>
       </div>
-      <button class="hover:text-indigo-600" v-if="!props.isReply">
+      <button
+        class="hover:text-indigo-600 text-zinc-400"
+        v-if="!props.isReply"
+        @click="replyHandler"
+      >
         <FontAwesomeIcon icon="fa-solid fa-reply" />
       </button>
     </div>
@@ -37,4 +85,13 @@ const timeString = computed(() => {
       <p>{{ props.content }}</p>
     </div>
   </li>
+  <div
+    v-show="!props.isReply && startReply"
+    class="w-indent flex justify-start items-start gap-2"
+  >
+    <div class="w-9 h-9 flex justify-center items-center">
+      <ProfileImg class="w-8 h-8" />
+    </div>
+    <CommentInput ref="replyREF" @onSubmit="commentSubmitHandler" />
+  </div>
 </template>
