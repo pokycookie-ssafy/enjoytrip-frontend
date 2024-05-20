@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { IPlanDetail } from '@/types/Plan'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import dayjs from 'dayjs'
 import { computed } from 'vue'
 
@@ -53,7 +52,7 @@ const details = computed(() => {
         </p>
         <ul class="flex flex-col gap-4 text-zinc-600">
           <li
-            class="flex gap-4 pl-4 p-2 border-l-4 border-indigo-600"
+            class="flex gap-4 ml-2 pl-4 p-2 border-l-4 border-indigo-600"
             v-for="e in day"
           >
             <span class="flex flex-col gap-2 justify-between text-sm">
