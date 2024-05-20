@@ -32,9 +32,9 @@ onUnmounted(() => {
 <template>
   <div
     v-if="pos && dndStore.data"
-    class="fixed bg-zinc-700 bg-opacity-30 rounded -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+    class="fixed bg-zinc-700 bg-opacity-30 rounded -translate-x-1/2 -translate-y-2 pointer-events-none"
     :style="`left: ${pos.x}px; top: ${pos.y}px; height: ${
-      1.25 * dndStore.data.height
+      1.5 * dndStore.data.height
     }rem; width: ${dndStore.width}px`"
   ></div>
 </template>

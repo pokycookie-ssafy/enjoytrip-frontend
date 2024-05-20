@@ -1,33 +1,50 @@
 <script setup lang="ts">
 import type { IAttraction } from '@/types/Attraction'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useDnDStore } from '@/stores/dnd'
+import { useResizeStore } from '@/stores/resize'
+import { getOffset } from '@/utils/planDetail'
+import type { IPlanDetail } from '@/types/Plan'
+import dayjs from 'dayjs'
 
 const props = defineProps<{
   data: IAttraction
-  offset: {
-    offsetX: number
-    offsetY: number
-    height: number
-  }
+  start: Date
+  end: Date
+  startDate: Date
+  addDetail: (detail: IPlanDetail) => void
+  deleteDetail: () => void
 }>()
 
 const dndStore = useDnDStore()
+const resizeStore = useResizeStore()
 
 const resizeREF = ref<HTMLDivElement | null>(null)
 
+const offset = computed(() => {
+  return getOffset(props.start, props.end, props.startDate, dndStore.width)
+})
+
 const clearEventListner = () => {
-  window.removeEventListener('mousemove', onResizeHandler)
+  props.addDetail({
+    attraction: props.data,
+    start: props.start,
+    end: dayjs(props.start)
+      .add(resizeStore.height * 30, 'minute')
+      .toDate(),
+  })
+  resizeStore.clear()
   window.removeEventListener('mouseup', clearEventListner)
 }
 
 const resizeHandler = () => {
-  window.addEventListener('mousemove', onResizeHandler)
+  resizeStore.setOffset({
+    offsetX: offset.value.offsetX,
+    offsetY: offset.value.offsetY,
+    start: props.start,
+  })
+  props.deleteDetail()
   window.addEventListener('mouseup', clearEventListner)
-}
-
-const onResizeHandler = (e: MouseEvent) => {
-  console.log(e.clientY)
 }
 
 const mousedownHandler = (e: MouseEvent) => {
@@ -35,12 +52,14 @@ const mousedownHandler = (e: MouseEvent) => {
     resizeREF.value &&
     (resizeREF.value as HTMLElement).contains(e.target as HTMLElement)
   ) {
+    resizeHandler()
     return
   }
+  props.deleteDetail()
 
   dndStore.startDrag({
     attraction: props.data,
-    height: 1,
+    height: dayjs(props.end).diff(props.start, 'minute') / 30,
   })
   window.addEventListener('mouseup', () => {
     dndStore.endDrag()
@@ -51,15 +70,14 @@ const mousedownHandler = (e: MouseEvent) => {
 <template>
   <button
     class="absolute cursor-all-scroll select-none border rounded p-2 bg-zinc-100 border-zinc-200 hover:bg-zinc-200 hover:border-zinc-300 text-zinc-800"
-    :style="`height: ${1.25 * props.offset.height}rem; width: ${
+    :style="`height: ${1.5 * offset.height}rem; width: ${
       dndStore.width
-    }px; left: ${props.offset.offsetX}px; top: ${props.offset.offsetY}px`"
+    }px; left: ${offset.offsetX}px; top: ${offset.offsetY}px`"
     @mousedown="mousedownHandler"
   >
     <div
-      class="absolute left-0 bottom-0 w-full h-2 bg-red-600 cursor-ns-resize"
+      class="absolute left-0 bottom-0 w-full h-2 cursor-ns-resize"
       ref="resizeREF"
-      @mousedown="resizeHandler"
     ></div>
     <!-- <p class="mb-1 text-left">{{ props.data.title }}</p> -->
   </button>

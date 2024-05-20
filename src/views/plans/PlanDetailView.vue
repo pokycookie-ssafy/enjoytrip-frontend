@@ -23,6 +23,17 @@ const details = ref<IPlanDetail[]>([])
 // const startDefault = ref(new Date())
 // const endDefault = ref(new Date())
 
+const addDetailHandler = (detail: IPlanDetail) => {
+  const tmpDetails = [...details.value, detail]
+  details.value = tmpDetails
+}
+
+const deleteDetailHandler = (index: number) => {
+  const tmpDetails = [...details.value]
+  tmpDetails.splice(index, 1)
+  details.value = tmpDetails
+}
+
 const dateFormat = computed(() => {
   const start = dayjs(startDate.value).format('YYYY.MM.DD')
   const end = dayjs(endDate.value).format('YYYY.MM.DD')
@@ -51,8 +62,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="w-vw p-24 flex justify-center gap-4">
-    <section class="flex flex-col gap-2 mb-8 w-[400px] shrink-0">
+  <main
+    class="w-vw p-24 flex flex-col lg:flex-row justify-center items-center lg:items-start gap-4"
+  >
+    <section class="flex flex-col gap-2 mb-8 lg:w-[400px] w-full shrink-0">
       <Input label="계획이름" :default="title" />
       <Calendar
         class="border rounded h-72 bg-white"
@@ -71,8 +84,14 @@ onMounted(() => {
         <AttractionDnDCard v-for="e in planStore.plan?.attractions" :data="e" />
       </ul>
     </section>
-    <section class="flex-1">
-      <TimeMapper :start="startDate" :end="endDate" :data="details" />
+    <section class="flex-1 w-full">
+      <TimeMapper
+        :start="startDate"
+        :end="endDate"
+        :data="details"
+        :addDetail="addDetailHandler"
+        :deleteDetail="deleteDetailHandler"
+      />
     </section>
   </main>
 </template>

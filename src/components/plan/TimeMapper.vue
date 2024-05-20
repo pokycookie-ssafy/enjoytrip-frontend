@@ -5,60 +5,64 @@ import { dayString } from '@/utils/day'
 import dayjs from 'dayjs'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import DetailTile from './DetailTile.vue'
+import ResizeTile from './ResizeTile.vue'
+import { useResizeStore } from '@/stores/resize'
+import { getTimeIdx } from '@/utils/planDetail'
 
 const props = defineProps<{
   start: Date
   end: Date
   data: IPlanDetail[]
+  addDetail: (detail: IPlanDetail) => void
+  deleteDetail: (index: number) => void
 }>()
 
 const dndStore = useDnDStore()
+const resizeStore = useResizeStore()
 
 const timeArr = ref<string[]>([])
 const dateArr = ref<Date[]>([])
 const areaREF = ref<HTMLElement | null>(null)
 
-// const refArr = ref([])
-// const refHandler = (e: Element, date: Date, time: number) => {
-//   const r = dayjs(date).diff(props.start, 'day')
-//   const c = time
-//   console.log(`${r} ${c}`)
-// }
+const startDetailHandler = (date: Date, time: number) => {
+  // if (!dndStore.data) return
+  // const attraction = dndStore.data.attraction
+  // const start = dayjs(date)
+  //   .startOf('day')
+  //   .add(30 * time, 'minute')
+  //   .toDate()
+  // const end = dayjs(start)
+  //   .add(30 * dndStore.data.height, 'minute')
+  //   .toDate()
+}
+
+const mouseenterHandler = (date: Date, time: number) => {
+  if (resizeStore.offset) {
+    const height = time
+    const startHeight = getTimeIdx(resizeStore.offset.start)
+    resizeStore.setHeight(height - startHeight + 1)
+  }
+}
 
 const mouseupHandler = (date: Date, time: number) => {
-  if (!dndStore.data) return
+  if (dndStore.data) {
+    const attraction = dndStore.data.attraction
+    const start = dayjs(date)
+      .startOf('day')
+      .add(30 * time, 'minute')
+      .toDate()
+    const end = dayjs(start)
+      .add(30 * dndStore.data.height, 'minute')
+      .toDate()
 
-  const attraction = dndStore.data.attraction
-  const start = dayjs(date)
-    .startOf('day')
-    .add(30 * time, 'minute')
-    .toDate()
-  const end = dayjs(start)
-    .add(30 * dndStore.data.height, 'minute')
-    .toDate()
-
-  props.data.push({ attraction, start, end })
+    props.data.push({ attraction, start, end })
+  }
 }
 
 const resizeHandler = () => {
   const width = areaREF.value?.clientWidth ?? 0
   const count = dayjs(props.end).diff(props.start, 'day') + 1
-  dndStore.setWidth((width - 80 - 16 - 16) / count)
-}
-
-const getOffset = (detail: IPlanDetail) => {
-  const offsetX =
-    16 + 80 + dayjs(detail.start).diff(props.start, 'day') * dndStore.width
-  const offsetY =
-    56 +
-    16 +
-    1 +
-    (dayjs(detail.start).diff(dayjs(detail.start).startOf('day'), 'minute') /
-      30) *
-      24
-  const height = dayjs(detail.end).diff(detail.start, 'minute') / 30
-
-  return { offsetX, offsetY, height }
+  dndStore.setWidth((width - 80) / count)
 }
 
 watch(
@@ -96,8 +100,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <article class="border p-4 flex w-full divide-x select-none">
-    <section class="p-4 flex w-full relative" ref="areaREF">
+  <article class="border rounded p-4 flex w-full divide-x select-none">
+    <section class="flex w-full relative" ref="areaREF">
       <div class="text-sm text-zinc-500 w-20 shrink-0">
         <p class="w-full h-14"></p>
         <div
@@ -118,14 +122,21 @@ onUnmounted(() => {
           v-for="time in 48"
           :key="time"
           :data-border="time % 2 == 0 && time !== 48"
+          @mousedown="startDetailHandler(date, time - 1)"
           @mouseup="mouseupHandler(date, time - 1)"
+          @mouseenter="mouseenterHandler(date, time - 1)"
         ></div>
       </div>
       <DetailTile
         :data="e.attraction"
-        :offset="getOffset(e)"
-        v-for="e in props.data"
+        :startDate="props.start"
+        :start="e.start"
+        :end="e.end"
+        :addDetail="props.addDetail"
+        :deleteDetail="() => props.deleteDetail(i)"
+        v-for="(e, i) in props.data"
       />
+      <ResizeTile />
     </section>
   </article>
 </template>
