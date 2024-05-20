@@ -8,7 +8,7 @@ import type { IAttraction } from '@/types/Attraction'
 import type { IPlanDetail } from '@/types/Plan'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import dayjs from 'dayjs'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -44,6 +44,10 @@ const dateHandler = (start: Date, end: Date) => {
   startDate.value = dayjs(start).startOf('date').toDate()
   endDate.value = dayjs(end).endOf('date').toDate()
 }
+
+// watch(details, (e) => {
+//   console.log(e)
+// })
 
 onMounted(() => {
   if (Array.isArray(route.params.id)) return

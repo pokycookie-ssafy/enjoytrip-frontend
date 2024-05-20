@@ -25,16 +25,18 @@ const offset = computed(() => {
   return getOffset(props.start, props.end, props.startDate, dndStore.width)
 })
 
-const clearEventListner = () => {
+const mouseupHandler = () => {
+  if (!resizeStore.offset) return
+
   props.addDetail({
     attraction: props.data,
-    start: props.start,
-    end: dayjs(props.start)
+    start: resizeStore.offset.start,
+    end: dayjs(resizeStore.offset.start)
       .add(resizeStore.height * 30, 'minute')
       .toDate(),
   })
   resizeStore.clear()
-  window.removeEventListener('mouseup', clearEventListner)
+  window.removeEventListener('mouseup', mouseupHandler)
 }
 
 const resizeHandler = () => {
@@ -44,7 +46,7 @@ const resizeHandler = () => {
     start: props.start,
   })
   props.deleteDetail()
-  window.addEventListener('mouseup', clearEventListner)
+  window.addEventListener('mouseup', mouseupHandler)
 }
 
 const mousedownHandler = (e: MouseEvent) => {

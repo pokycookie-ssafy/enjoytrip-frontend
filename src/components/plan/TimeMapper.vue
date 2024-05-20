@@ -55,7 +55,7 @@ const mouseupHandler = (date: Date, time: number) => {
       .add(30 * dndStore.data.height, 'minute')
       .toDate()
 
-    props.data.push({ attraction, start, end })
+    props.addDetail({ attraction, start, end })
   }
 }
 
@@ -118,7 +118,7 @@ onUnmounted(() => {
           <p class="text-2xl text-zinc-700">{{ date.getDate() }}</p>
         </span>
         <div
-          class="w-full h-6 hover:bg-zinc-100 data-[border=true]:border-b"
+          class="w-full h-6 data-[border=true]:border-b"
           v-for="time in 48"
           :key="time"
           :data-border="time % 2 == 0 && time !== 48"
