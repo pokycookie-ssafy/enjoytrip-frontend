@@ -11,6 +11,9 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import dayjs from 'dayjs'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import isBetween from 'dayjs/plugin/isBetween'
+
+dayjs.extend(isBetween)
 
 const route = useRoute()
 const planStore = usePlanStore()
@@ -23,6 +26,35 @@ const details = ref<IPlanDetail[]>([])
 
 const viewStartDate = ref(new Date())
 const viewEndDate = ref(new Date())
+
+const viewDetails = computed(() => {
+  return [...details.value].filter((e) => {
+    return dayjs(e.start).isBetween(
+      viewStartDate.value,
+      viewEndDate.value,
+      'day',
+      '[]'
+    )
+  })
+})
+
+const prevViewDate = () => {
+  const prevStartDate = dayjs(viewStartDate.value).subtract(1, 'day')
+  const prevEndDate = dayjs(viewEndDate.value).subtract(1, 'day')
+
+  if (prevStartDate.isBefore(startDate.value)) return
+  viewStartDate.value = prevStartDate.toDate()
+  viewEndDate.value = prevEndDate.toDate()
+}
+
+const nextViewDate = () => {
+  const nextStartDate = dayjs(viewStartDate.value).add(1, 'day')
+  const nextEndDate = dayjs(viewEndDate.value).add(1, 'day')
+
+  if (nextEndDate.isAfter(endDate.value)) return
+  viewStartDate.value = nextStartDate.toDate()
+  viewEndDate.value = nextEndDate.toDate()
+}
 
 const addDetailHandler = (detail: IPlanDetail) => {
   const tmpDetails = [...details.value, detail]
@@ -50,6 +82,7 @@ watch([startDate, endDate], ([s, e]) => {
   viewStartDate.value = s
   viewEndDate.value =
     dayjs(e).diff(s, 'day') < 3 ? e : dayjs(s).add(2, 'day').toDate()
+  // viewEndDate.value = e
 })
 
 onMounted(() => {
@@ -87,7 +120,9 @@ onMounted(() => {
         <FontAwesomeIcon icon="fa-regular fa-calendar-check" />
         <p>{{ dateFormat }}</p>
       </div>
-      <ul class="flex flex-col flex-1 gap-2 w-full overflow-y-auto">
+      <ul
+        class="flex flex-col flex-1 gap-2 w-full max-h-96 overflow-y-auto p-2 border rounded"
+      >
         <AttractionDnDCard v-for="e in planStore.plan?.attractions" :data="e" />
       </ul>
       <div class="w-full border p-3 rounded">
@@ -95,20 +130,22 @@ onMounted(() => {
       </div>
     </section>
     <section class="flex-1 w-full">
-      <div class="flex justify-between p-2 text-zinc-600">
-        <button class="w-6 h-6 hover:text-indigo-600">
+      <!-- <div class="flex justify-between p-2 text-zinc-600">
+        <button class="w-6 h-6 hover:text-indigo-600" @click="prevViewDate">
           <FontAwesomeIcon icon="fa-solid fa-angle-left" />
         </button>
-        <button class="w-6 h-6 hover:text-indigo-600">
+        <button class="w-6 h-6 hover:text-indigo-600" @click="nextViewDate">
           <FontAwesomeIcon icon="fa-solid fa-angle-right" />
         </button>
-      </div>
+      </div> -->
       <TimeMapper
         :start="viewStartDate"
         :end="viewEndDate"
-        :data="details"
+        :data="viewDetails"
         :addDetail="addDetailHandler"
         :deleteDetail="deleteDetailHandler"
+        @onPrev="prevViewDate"
+        @onNext="nextViewDate"
       />
     </section>
   </main>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { IPlanDetail } from '@/types/Plan'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import dayjs from 'dayjs'
 import { computed } from 'vue'
 
@@ -45,6 +46,13 @@ const details = computed(() => {
 
 <template>
   <div>
+    <div
+      class="flex items-center gap-2 text-zinc-600 font-semibold select-none"
+      v-if="details.length === 0"
+    >
+      <FontAwesomeIcon icon="fa-regular fa-calendar-plus" />
+      <p>일정을 추가해주세요</p>
+    </div>
     <ul class="flex flex-col gap-2">
       <li v-for="day in details">
         <p class="font-semibold mb-2 text-zinc-600">

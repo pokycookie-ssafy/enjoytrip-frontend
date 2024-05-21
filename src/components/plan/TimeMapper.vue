@@ -8,6 +8,7 @@ import DetailTile from './DetailTile.vue'
 import ResizeTile from './ResizeTile.vue'
 import { useResizeStore } from '@/stores/resize'
 import { getTimeIdx } from '@/utils/planDetail'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps<{
   start: Date
@@ -15,6 +16,11 @@ const props = defineProps<{
   data: IPlanDetail[]
   addDetail: (detail: IPlanDetail) => void
   deleteDetail: (index: number) => void
+}>()
+
+const emits = defineEmits<{
+  (e: 'onPrev'): void
+  (e: 'onNext'): void
 }>()
 
 const dndStore = useDnDStore()
@@ -40,7 +46,7 @@ const mouseenterHandler = (date: Date, time: number) => {
   if (resizeStore.offset) {
     const height = time
     const startHeight = getTimeIdx(resizeStore.offset.start)
-    resizeStore.setHeight(height - startHeight + 1)
+    resizeStore.setHeight(Math.max(height - startHeight + 1, 1))
   }
 }
 
@@ -102,6 +108,14 @@ onUnmounted(() => {
 <template>
   <article class="border rounded p-4 flex w-full divide-x select-none">
     <section class="flex w-full relative" ref="areaREF">
+      <div class="flex w-full justify-between pt-6 text-zinc-600 absolute">
+        <button class="w-6 h-6 hover:text-indigo-600" @click="emits('onPrev')">
+          <FontAwesomeIcon icon="fa-solid fa-angle-left" />
+        </button>
+        <button class="w-6 h-6 hover:text-indigo-600" @click="emits('onNext')">
+          <FontAwesomeIcon icon="fa-solid fa-angle-right" />
+        </button>
+      </div>
       <div class="text-sm text-zinc-500 w-20 shrink-0">
         <p class="w-full h-14"></p>
         <div
