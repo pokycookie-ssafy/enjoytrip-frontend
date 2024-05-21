@@ -4,17 +4,18 @@ import AttractionModal from '@/components/modal/AttractionModal.vue'
 import AttractionLi from '@/components/attractions/AttractionLi.vue'
 import AttractionNav from '@/components/attractions/AttractionNav.vue'
 import type { IAttraction } from '@/types/Attraction'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
+import InfiniteScroll from '@/components/ui/InfiniteScroll.vue'
 
 const mockAttraction = ref<IAttraction[]>([])
 
 const isOpen = ref(false)
 
-onMounted(async () => {
+const fetchAttractions = async () => {
   const { data } = await axios<IAttraction>('/api/attraction.json')
-  mockAttraction.value = [data, data, data, data, data]
-})
+  mockAttraction.value = [...mockAttraction.value, data, data, data, data, data]
+}
 </script>
 
 <template>
@@ -23,6 +24,7 @@ onMounted(async () => {
       <AttractionNav class="md:flex hidden" />
       <ul class="flex flex-col gap-4 flex-1">
         <AttractionLi v-for="attraction in mockAttraction" :data="attraction" />
+        <InfiniteScroll @onObserve="fetchAttractions" />
       </ul>
     </section>
   </main>
