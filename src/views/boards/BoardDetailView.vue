@@ -29,6 +29,7 @@ const updated = ref(new Date())
 const content = ref('')
 const likecount = ref(0)
 const comments = ref<IComment[]>([])
+const isOwner = ref(false)
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
@@ -36,6 +37,16 @@ const paginationHandler = (idx: number) => {
 
 const editHandler = () => {
   router.push(`/boards/write/${boardId.value}`)
+}
+
+const deleteHandler = async () => {
+  try {
+    const { data } = await axios.delete(`/boards?id=${boardId.value}`)
+    console.log(data)
+    router.push({ name: 'board' })
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 const commentSubmitHandler = async (comment: string) => {
@@ -88,15 +99,18 @@ const commentHandler = async () => {
 const axiosHandler = async () => {
   try {
     const userId = authStore.user?.id ?? null
-    const { data } = await axios.get<IResponse<IBoardDetailResponse>>(
-      `/boards/?id=${boardId.value}&writer=${userId}`
-    )
+    let url = `/boards/?id=${boardId.value}`
+    if (userId) url += `&writer=${userId}`
+    const { data } = await axios.get<IResponse<IBoardDetailResponse>>(url)
+    console.log(data)
     title.value = data.data.title
     writer.value = data.data.writer
     updated.value = new Date(data.data.regDate)
     content.value = data.data.content
     likecount.value = data.data.likecount
+    isOwner.value = data.data.mine
   } catch (err) {
+    router.push({ name: 'board' })
     console.error(err)
   }
 }
@@ -121,10 +135,9 @@ watch(
 
 <template>
   <main class="w-vw p-24 flex flex-col items-center">
-    <!-- v:if isOwner == true -->
-    <div class="w-full max-w-[800px] flex gap-2 pb-2">
+    <div v-if="isOwner" class="w-full max-w-[800px] flex gap-2 pb-2">
       <Button @onClick="editHandler" type="light">수정</Button>
-      <Button type="light">삭제</Button>
+      <Button type="light" @onClick="deleteHandler">삭제</Button>
     </div>
     <article class="flex flex-col w-full max-w-[800px] rounded border p-4">
       <section class="p-3 flex flex-col gap-2 border-b">
@@ -194,6 +207,7 @@ watch(
         </div>
         <ul v-if="boardId" class="flex flex-col items-end gap-2">
           <Comment
+            :id="e.id"
             :writer="e.writer"
             :content="e.content"
             :time="e.created"
@@ -202,7 +216,7 @@ watch(
             :commentHandler="commentHandler"
             v-for="e in comments"
           />
-          <Comment
+          <!-- <Comment
             :writer="'admin'"
             :content="'test'"
             :time="new Date()"
@@ -217,7 +231,7 @@ watch(
             :isReply="true"
             :boardId="boardId"
             :commentHandler="commentHandler"
-          />
+          /> -->
         </ul>
         <!-- comment count <= 15이면 표시 X -->
         <div class="w-full flex justify-center">

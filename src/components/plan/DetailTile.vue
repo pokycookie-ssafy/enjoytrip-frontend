@@ -6,6 +6,7 @@ import { useResizeStore } from '@/stores/resize'
 import { getOffset } from '@/utils/planDetail'
 import type { IPlanDetail } from '@/types/Plan'
 import dayjs from 'dayjs'
+import { typeColor } from '@/utils/contentType'
 
 const props = defineProps<{
   data: IAttraction
@@ -29,7 +30,7 @@ const mouseupHandler = () => {
   if (!resizeStore.offset) return
 
   props.addDetail({
-    attraction: props.data,
+    attraction: resizeStore.offset.attraction,
     start: resizeStore.offset.start,
     end: dayjs(resizeStore.offset.start)
       .add(resizeStore.height * 30, 'minute')
@@ -44,6 +45,7 @@ const resizeHandler = () => {
     offsetX: offset.value.offsetX,
     offsetY: offset.value.offsetY,
     start: props.start,
+    attraction: props.data,
   })
   props.deleteDetail()
   window.addEventListener('mouseup', mouseupHandler)
@@ -72,16 +74,18 @@ const mousedownHandler = (e: MouseEvent) => {
 <template>
   <button
     v-if="offset.offsetX >= 0"
-    class="absolute cursor-all-scroll select-none border rounded p-2 bg-zinc-100 border-zinc-200 hover:bg-zinc-200 hover:border-zinc-300 text-zinc-800"
+    class="absolute cursor-all-scroll select-none border opacity-80 rounded p-1 flex items-start"
     :style="`height: ${1.5 * offset.height}rem; width: ${
       dndStore.width
-    }px; left: ${offset.offsetX}px; top: ${offset.offsetY}px`"
+    }px; left: ${offset.offsetX}px; top: ${
+      offset.offsetY
+    }px; background-color: ${typeColor(props.data.contentTypeId)}`"
     @mousedown="mousedownHandler"
   >
     <div
       class="absolute left-0 bottom-0 w-full h-2 cursor-ns-resize"
       ref="resizeREF"
     ></div>
-    <!-- <p class="mb-1 text-left">{{ props.data.title }}</p> -->
+    <p class="mb-1 text-left text-xs text-white">{{ props.data.title }}</p>
   </button>
 </template>

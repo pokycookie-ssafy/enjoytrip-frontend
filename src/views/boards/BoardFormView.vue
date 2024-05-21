@@ -2,6 +2,10 @@
 import Button from '@/components/ui/Button.vue'
 import UploadFileDND from '@/components/ui/UploadFileDND.vue'
 import UploadedImgPreview from '@/components/ui/UploadedImgPreview.vue'
+import { useAuthStore } from '@/stores/authStore'
+import { useToastStore } from '@/stores/toast'
+import type { IBoardDetailResponse } from '@/types/Board'
+import type { IResponse } from '@/types/Response'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { QuillEditor } from '@vueup/vue-quill'
 import axios from 'axios'
@@ -30,13 +34,10 @@ const quillModuleOptions = {
   },
 }
 
-/*
-TODO
-- 새 글 등록인지, 기존 글 수정인지 확인
-*/
-
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
+const toast = useToastStore()
 
 const title = ref('')
 const content = ref('')
@@ -45,8 +46,10 @@ const uploadFiles = ref<IUploadedImage[]>([])
 const boardId = ref<number | null>(null)
 
 const updateHandler = async () => {
-  const formData = new FormData()
+  if (!boardId.value) return
 
+  const formData = new FormData()
+  formData.append('id', boardId.value.toString())
   formData.append('title', title.value)
   formData.append('content', content.value)
   uploadFiles.value.forEach((upload) => {
@@ -54,12 +57,17 @@ const updateHandler = async () => {
   })
 
   try {
-    const { data } = await axios.patch(`/boards/${boardId}`, formData, {
+    const { data } = await axios.patch(`/boards`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     })
-    router.push({ path: `boards/${data.id}` })
+    console.log(data)
+    if (data.status === 'success') {
+      router.push({ name: 'board' })
+    } else {
+      toast.addToast(data.message, 'danger')
+    }
   } catch (err) {
     console.error(err)
   }
@@ -72,6 +80,7 @@ const sumbmitHandler = async () => {
   formData.append('content', content.value)
   uploadFiles.value.forEach((upload) => {
     formData.append('images', upload.file)
+    console.log(upload.file)
   })
 
   try {
@@ -80,6 +89,7 @@ const sumbmitHandler = async () => {
         'Content-Type': 'multipart/form-data',
       },
     })
+    console.log(data)
     router.push({ path: `boards/${data.id}` })
   } catch (err) {
     console.error(err)
@@ -127,11 +137,17 @@ const deleteFileHandler = (index: number) => {
 watch(boardId, async (id) => {
   try {
     if (!id) return
-    const { data } = await axios.get(`/boards/${id}`)
-    // title.value = data.title
-    // content.value = data.content
-    title.value = '수정하기 제목'
-    content.value = '수정하기 내용'
+    const userId = authStore.user?.id ?? null
+    let url = `/boards/?id=${boardId.value}`
+    if (userId) url += `&writer=${userId}`
+    const { data } = await axios.get<IResponse<IBoardDetailResponse>>(url)
+    console.log(data)
+    if (!data.data.mine) {
+      router.push({ name: 'board' })
+      return
+    }
+    title.value = data.data.title
+    content.value = data.data.content
   } catch (err) {
     console.error(err)
   }

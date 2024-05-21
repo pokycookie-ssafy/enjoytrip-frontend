@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import MutliImage from '@/components/ui/MutliImage.vue'
 import Like from '@/components/ui/Like.vue'
 import type { IAttraction } from '@/types/Attraction'
-import type { ISido } from '@/types/SidoGugun'
 import AttractionCategoryLabel from '@/components/attractions/AttractionCategoryLabel.vue'
 import AttractionStarRating from '@/components/attractions/AttractionStarRating.vue'
 import ReviewPreviewCard from '@/components/attractions/ReviewPreviewCard.vue'
@@ -27,7 +25,7 @@ const reviewOpen = ref(false)
 
 const sidoName = ref('')
 const gugunName = ref('')
-const icon = ref<string>('')
+const type = ref<IContentType | null>(null)
 
 const mockStarData = ref<number[]>([])
 const pageIdx = ref(1)
@@ -45,7 +43,7 @@ watch(
 
     sidoName.value = sido?.name ?? ''
     gugunName.value = gugun?.name ?? ''
-    icon.value = content?.icon ?? ''
+    type.value = content ?? null
   },
   { immediate: true }
 )
@@ -72,7 +70,7 @@ onMounted(() => {
   <li
     class="w-full flex flex-col p-5 gap-5 text-sm text-zinc-500 rounded border shadow-sm relative"
   >
-    <AttractionCategoryLabel class="right-4" :icon="icon" />
+    <AttractionCategoryLabel class="right-4" :type="type" />
     <div class="flex flex-col gap-1">
       <h2 class="text-zinc-600 font-medium text-lg flex-1 ellipsis">
         {{ props.data.title }}

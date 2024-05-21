@@ -13,7 +13,7 @@ const isOpen = ref(false)
 </script>
 
 <template>
-  <li class="w-full border p-3 rounded text-zinc-700 shadow">
+  <li class="w-full border p-4 rounded text-zinc-700 shadow">
     <div class="flex justify-between">
       <span>
         <h3 class="text-lg font-semibold mb-1">여행계획 이름</h3>

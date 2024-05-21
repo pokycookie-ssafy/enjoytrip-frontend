@@ -1,6 +1,43 @@
 <script setup lang="ts">
+import AttractionNav from '@/components/attractions/AttractionNav.vue'
 import ReviewLi from '@/components/reviews/ReviewLi.vue'
-import ReviewNav from '@/components/reviews/ReviewNav.vue'
+import axios from 'axios'
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
+
+const reviews = ref([])
+const pageIdx = ref(0)
+
+const filterHandler = (query: string) => {
+  router.push(`/attractions?${query}`)
+}
+
+const fetchReviews = async () => {
+  let query = route.fullPath.replace(route.path, '')
+  if (query.trim() === '') query = `?page=${pageIdx.value}&size=${15}`
+  else query = `${query}&page=${pageIdx.value}&size=${15}`
+
+  try {
+    // const { data } = await axios.get(
+    //   `/reviews${query}`
+    // )
+    // reviews.value = [...reviews.value, ...data.data.content]
+    // pageIdx.value++
+    // console.log(data)
+  } catch (err) {}
+}
+
+watch(
+  () => route.fullPath,
+  () => {
+    pageIdx.value = 0
+    reviews.value = []
+  },
+  { immediate: true }
+)
 
 const mock = [
   {
@@ -55,7 +92,7 @@ const mock = [
 <template>
   <main class="w-vw p-24 flex justify-center">
     <section class="flex gap-4 w-full max-w-[800px]">
-      <ReviewNav class="md:flex hidden" />
+      <AttractionNav class="md:flex hidden" @onSubmit="filterHandler" />
       <ul class="flex flex-col gap-4 flex-1">
         <ReviewLi
           v-for="e in mock"

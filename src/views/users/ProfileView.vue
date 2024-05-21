@@ -47,7 +47,7 @@ const menuArr = [
 
 <template>
   <main class="w-vw h-screen flex">
-    <section class="shadow w-80 p-8 flex flex-col">
+    <section class="shadow w-80 p-8 flex-col hidden md:flex">
       <div class="flex flex-col justify-start items-center p-5 border-b">
         <ProfileImg class="w-20 h-20" editable />
         <h2 class="mt-2 text-xl font-semibold text-zinc-700">

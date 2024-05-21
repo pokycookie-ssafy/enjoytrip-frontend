@@ -35,7 +35,7 @@ const details = computed(() => {
       start: e.start,
       end: e.end,
       title: e.attraction.title,
-      type: e.attraction.contentType,
+      type: e.attraction.contentTypeId,
       addr: e.attraction.addr1,
     })
   })

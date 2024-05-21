@@ -12,6 +12,7 @@ import dayjs from 'dayjs'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import isBetween from 'dayjs/plugin/isBetween'
+import Button from '@/components/ui/Button.vue'
 
 dayjs.extend(isBetween)
 
@@ -37,6 +38,10 @@ const viewDetails = computed(() => {
     )
   })
 })
+
+const saveHandler = () => {
+  planStore.saveDetails(details.value)
+}
 
 const prevViewDate = () => {
   const prevStartDate = dayjs(viewStartDate.value).subtract(1, 'day')
@@ -82,7 +87,7 @@ watch([startDate, endDate], ([s, e]) => {
   viewStartDate.value = s
   viewEndDate.value =
     dayjs(e).diff(s, 'day') < 3 ? e : dayjs(s).add(2, 'day').toDate()
-  // viewEndDate.value = e
+  planStore.changeDate(s, e)
 })
 
 onMounted(() => {
@@ -128,16 +133,9 @@ onMounted(() => {
       <div class="w-full border p-3 rounded">
         <PlanResult :plans="details" />
       </div>
+      <Button @onClick="saveHandler">저장하기</Button>
     </section>
     <section class="flex-1 w-full">
-      <!-- <div class="flex justify-between p-2 text-zinc-600">
-        <button class="w-6 h-6 hover:text-indigo-600" @click="prevViewDate">
-          <FontAwesomeIcon icon="fa-solid fa-angle-left" />
-        </button>
-        <button class="w-6 h-6 hover:text-indigo-600" @click="nextViewDate">
-          <FontAwesomeIcon icon="fa-solid fa-angle-right" />
-        </button>
-      </div> -->
       <TimeMapper
         :start="viewStartDate"
         :end="viewEndDate"

@@ -31,7 +31,7 @@ const initMap = () => {
   console.groupEnd()
 
   const options = {
-    center: new kakao.maps.LatLng(0, 0),
+    center: new kakao.maps.LatLng(35.15647954, 129.1248083),
     level: DEFAULT_ZOOM_LEVEL,
   }
 

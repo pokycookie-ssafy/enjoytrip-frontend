@@ -1,3 +1,4 @@
+import type { IAttraction } from '@/types/Attraction'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -5,6 +6,7 @@ interface IOffset {
   offsetX: number
   offsetY: number
   start: Date
+  attraction: IAttraction
 }
 
 export const useResizeStore = defineStore('resize', () => {

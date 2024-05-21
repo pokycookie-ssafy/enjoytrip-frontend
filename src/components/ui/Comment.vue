@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/authStore'
 import axios from 'axios'
 
 const props = defineProps<{
+  id: number
   writer: string
   content: string
   time: Date
@@ -50,10 +51,11 @@ const commentSubmitHandler = async (comment: string) => {
       userId: authStore.user.id,
       content: comment,
       boardId: props.boardId,
-      parentId: null,
+      parentId: props.id,
     })
     console.log(data)
     props.commentHandler()
+    startReply.value = false
   } catch (err) {
     console.error(err)
   }

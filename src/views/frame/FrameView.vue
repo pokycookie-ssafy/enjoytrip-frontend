@@ -31,11 +31,11 @@ const detailPlanHandler = () => {
       class="p-2 pb-4 border-zinc-300 flex justify-start items-center gap-4 border-b select-none"
     >
       <ProfileImg class="w-14 h-14" />
-      <div v-if="authStore.user">
-        <h3 class="text-xl font-semibold text-zinc-700">
+      <div v-if="authStore.user" class="flex-1">
+        <h3 class="text-xl font-semibold text-zinc-700 ellipsis">
           {{ authStore.user.nickname }}
         </h3>
-        <p class="text-sm text-zinc-400 font-light">
+        <p class="text-sm text-zinc-400 font-light ellipsis">
           {{ authStore.user.email }}
         </p>
       </div>
@@ -70,7 +70,11 @@ const detailPlanHandler = () => {
     </section>
 
     <ul class="flex flex-col flex-1 gap-2 w-full overflow-y-auto">
-      <AttractionCard v-for="e in planStore.plan?.attractions" :data="e" />
+      <AttractionCard
+        :data="e"
+        :index="i"
+        v-for="(e, i) in planStore.plan?.attractions"
+      />
     </ul>
     <!-- <section
       class="flex flex-col flex-1 justify-start items-center gap-4"

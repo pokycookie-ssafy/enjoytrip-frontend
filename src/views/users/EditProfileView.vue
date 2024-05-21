@@ -5,6 +5,7 @@ import InputGroup from '@/components/ui/InputGroup.vue'
 import ProfileImg from '@/components/ui/ProfileImg.vue'
 import Toggle from '@/components/ui/Toggle.vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useToastStore } from '@/stores/toast'
 import type { IResponse } from '@/types/Response'
 import type { IUserResponse } from '@/types/User'
 import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
@@ -12,6 +13,7 @@ import axios from 'axios'
 import { onMounted, ref } from 'vue'
 
 const authStore = useAuthStore()
+const toastStore = useToastStore()
 
 const nickname = ref('')
 const name = ref('')
@@ -27,6 +29,9 @@ const editHandler = async () => {
       phone: phone.value,
     })
     console.log(data)
+    if (data.status === 'success') {
+      toastStore.addToast('유저정보가 변경되었습니다')
+    }
   } catch (err) {
     console.error(err)
   }
@@ -38,6 +43,9 @@ const passwordEditHandler = async () => {
       password: newPassword.value,
     })
     console.log(data)
+    if (data.status === 'success') {
+      toastStore.addToast('비밀번호가 변경되었습니다')
+    }
   } catch (err) {
     console.error(err)
   }

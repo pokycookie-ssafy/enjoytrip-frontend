@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import KakaoMap, { type IMarker } from '@/components/ui/KakaoMap.vue'
+import { usePlanStore } from '@/stores/plan'
+import { ref, watch } from 'vue'
 
-const marker: IMarker[] = [
-  {
-    lat: 33.450701,
-    lng: 126.570667,
+const planStore = usePlanStore()
+
+const marker = ref<IMarker[]>([])
+
+watch(
+  () => planStore.plan?.attractions,
+  (attractions) => {
+    if (!attractions) return
+    const tmpMarker: IMarker[] = attractions.map((e) => ({
+      lat: e.latitude,
+      lng: e.longitude,
+    }))
+    marker.value = tmpMarker
   },
-  {
-    lat: 33.449701,
-    lng: 126.572667,
-  },
-  {
-    lat: 33.453701,
-    lng: 126.574667,
-  },
-]
+  { immediate: true }
+)
 </script>
 
 <template>
