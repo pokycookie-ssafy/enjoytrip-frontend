@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { IAttraction } from '@/types/Attraction'
 import type { IPlanDetail } from '@/types/Plan'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import dayjs from 'dayjs'
@@ -7,13 +8,16 @@ import { computed } from 'vue'
 interface IMappedDetails {
   start: Date
   end: Date
-  title: string
-  type: number
-  addr: string
+  attraction: IAttraction
 }
 
 const props = defineProps<{
   plans: IPlanDetail[]
+  allowReview?: boolean
+}>()
+
+const emits = defineEmits<{
+  (e: 'onReview', attraction: IAttraction): void
 }>()
 
 const details = computed(() => {
@@ -34,9 +38,7 @@ const details = computed(() => {
     tmp.push({
       start: e.start,
       end: e.end,
-      title: e.attraction.title,
-      type: e.attraction.contentTypeId,
-      addr: e.attraction.addr1,
+      attraction: e.attraction,
     })
   })
   if (tmp.length > 0) result.push(tmp)
@@ -67,7 +69,16 @@ const details = computed(() => {
               <p>{{ dayjs(e.start).format('HH:mm') }}</p>
               <p>{{ dayjs(e.end).format('HH:mm') }}</p>
             </span>
-            <p class="ellipsis">{{ e.title }}</p>
+            <p class="ellipsis" v-if="!props.allowReview">
+              {{ e.attraction.title }}
+            </p>
+            <button
+              class="ellipsis hover:underline h-fit"
+              @click="emits('onReview', e.attraction)"
+              v-if="props.allowReview"
+            >
+              {{ e.attraction.title }}
+            </button>
           </li>
         </ul>
       </li>

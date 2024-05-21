@@ -22,7 +22,7 @@ onMounted(() => {
 
 <template>
   <section class="flex-1 flex justify-center overflow-y-auto">
-    <div class="flex flex-col gap-8 w-full max-w-[600px] h-fit pt-24 p-14">
+    <div class="flex flex-col gap-8 w-full max-w-[800px] h-fit pt-24 p-14">
       <ul class="flex flex-col gap-4">
         <!-- <MyPlanLi :plan="plan" v-for="plan in plans" /> -->
         <MyPlanLi v-for="i in 10" />

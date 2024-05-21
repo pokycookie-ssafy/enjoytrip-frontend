@@ -22,6 +22,7 @@ import MyCommentsView from '@/views/users/MyCommentsView.vue'
 import MyLikePostsView from '@/views/users/MyLikePostsView.vue'
 import MyLikeReviewsView from '@/views/users/MyLikeReviewsView.vue'
 import MyLikeAttractionsView from '@/views/users/MyLikeAttractionsView.vue'
+import NewReviewView from '@/views/reviews/NewReviewView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -149,6 +150,10 @@ const router = createRouter({
       path: '/reviews',
       name: 'review',
       component: ReviewView,
+    },
+    {
+      path: '/reviews/new/:id',
+      component: NewReviewView,
     },
     {
       path: '/attractions',
