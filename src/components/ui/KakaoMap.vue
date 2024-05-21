@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 
 const DEFAULT_ZOOM_LEVEL = 5
-const MAX_ZOOM_LEVEL = 8
+const MAX_ZOOM_LEVEL = 10
 const OVERLAY_X_ANCHOR = 0.5
 const OVERLAY_Y_ANCHOR = 1.23
 
