@@ -41,7 +41,7 @@ watch(
   () => {
     const sido = areaCode.find((e) => e.code === props.data.sidoCode)
     const gugun = sido?.details.find((e) => e.code === props.data.gugunCode)
-    const content = contentType.find((e) => e.code === props.data.contentType)
+    const content = contentType.find((e) => e.code === props.data.contentTypeId)
 
     sidoName.value = sido?.name ?? ''
     gugunName.value = gugun?.name ?? ''
@@ -73,21 +73,22 @@ onMounted(() => {
     class="w-full flex flex-col p-5 gap-5 text-sm text-zinc-500 rounded border shadow-sm relative"
   >
     <AttractionCategoryLabel class="right-4" :icon="icon" />
-    <div class="flex justify-between items-start">
-      <div class="flex flex-col gap-1">
-        <h2 class="text-zinc-600 font-medium text-lg flex-1 ellipsis">
-          {{ props.data.title }}
-        </h2>
-        <span class="flex justify-start items-center text-sm gap-1 font-light">
-          <p class="hover:underline cursor-pointer">{{ sidoName }}</p>
-          <p>/</p>
-          <p class="hover:underline cursor-pointer">{{ gugunName }}</p>
-        </span>
-      </div>
+    <div class="flex flex-col gap-1">
+      <h2 class="text-zinc-600 font-medium text-lg flex-1 ellipsis">
+        {{ props.data.title }}
+      </h2>
+      <span class="flex justify-start items-center text-sm gap-1 font-light">
+        <p class="hover:underline cursor-pointer">{{ sidoName }}</p>
+        <p>/</p>
+        <p class="hover:underline cursor-pointer">{{ gugunName }}</p>
+      </span>
     </div>
 
     <div class="flex flex-col gap-2">
-      <MutliImage :imgSrc="[props.data.image1]" />
+      <MutliImage
+        :imgSrc="[props.data.firstImage]"
+        v-if="props.data.firstImage.trim() !== ''"
+      />
       <AttractionMap
         :locationName="props.data.addr1"
         :lat="props.data.latitude"

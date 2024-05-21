@@ -1,16 +1,22 @@
 export interface IAttraction {
   contentId: number
-  contentType: number
+  contentTypeId: number
   title: string
   tel: string
   sidoCode: number
   gugunCode: number
   addr1: string
   addr2: string
-  image1: string
-  image2: string
+  firstImage: string
+  firstImage2: string
   latitude: number
   longitude: number
-  mLevel: number
-  readCount: number
+  mlevel: number
+  readcount: number
+  zipcode: number
+}
+
+export interface IAttractionResponse {
+  content: IAttraction[]
+  totalElements: number
 }
