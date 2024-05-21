@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Button from '@/components/ui/Button.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
-import Input from '@/components/ui/Input.vue'
+import Input, { type IInputInfo } from '@/components/ui/Input.vue'
 import type { IResponse } from '@/types/Response'
 import { getLastDate, getLastYear } from '@/utils/calendar'
 import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
+import { validatePassword } from '@/utils/validator'
 import axios from 'axios'
-import dayjs from 'dayjs'
 import { onMounted, ref, watch } from 'vue'
 
 const name = ref('')
@@ -15,6 +15,8 @@ const email = ref('')
 const password = ref('')
 const passwordCheck = ref('')
 const phone = ref('')
+
+const passwordInfo = ref<IInputInfo | null>(null)
 
 const yearArr = ref<number[]>([])
 const monthArr = ref<number[]>([])
@@ -28,6 +30,16 @@ const gender = ref<string | null>(null)
 const agency = ref<string | null>(null)
 
 const submitHandler = async () => {
+  passwordInfo.value = null
+
+  if (!validatePassword(password.value, passwordCheck.value)) {
+    passwordInfo.value = {
+      message: '비밀번호가 일치하지 않습니다',
+      status: 'danger',
+    }
+    return
+  }
+
   try {
     const { data } = await axios.post<IResponse<any>>('/users', {
       name: name.value,
@@ -98,6 +110,7 @@ onMounted(() => {
         />
         <Input
           :value="passwordCheck"
+          :info="passwordInfo ?? undefined"
           class="w-full"
           label="비밀번호 확인"
           @onChange="(v) => (passwordCheck = v)"

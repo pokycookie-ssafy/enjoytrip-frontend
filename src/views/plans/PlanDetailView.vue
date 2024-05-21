@@ -3,20 +3,22 @@ import AttractionDnDCard from '@/components/plan/AttractionDnDCard .vue'
 import PlanResult from '@/components/plan/PlanResult.vue'
 import TimeMapper from '@/components/plan/TimeMapper.vue'
 import Calendar from '@/components/ui/Calendar.vue'
-import Input from '@/components/ui/Input.vue'
+import Input, { type IInputInfo } from '@/components/ui/Input.vue'
 import { usePlanStore } from '@/stores/plan'
 import type { IAttraction } from '@/types/Attraction'
 import type { IPlanDetail } from '@/types/Plan'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import dayjs from 'dayjs'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import isBetween from 'dayjs/plugin/isBetween'
 import Button from '@/components/ui/Button.vue'
+import { validateBlank } from '@/utils/validator'
 
 dayjs.extend(isBetween)
 
 const route = useRoute()
+const router = useRouter()
 const planStore = usePlanStore()
 
 const title = ref('')
@@ -24,6 +26,8 @@ const startDate = ref(new Date())
 const endDate = ref(new Date())
 const attractions = ref<IAttraction[]>([])
 const details = ref<IPlanDetail[]>([])
+
+const titleInfo = ref<IInputInfo | null>(null)
 
 const viewStartDate = ref(new Date())
 const viewEndDate = ref(new Date())
@@ -39,8 +43,21 @@ const viewDetails = computed(() => {
   })
 })
 
+const titleHandler = (value: string) => {
+  titleInfo.value = null
+  title.value = value
+  if (!validateBlank(value)) {
+    titleInfo.value = {
+      message: '계획 이름을 정해주세요',
+      status: 'danger',
+    }
+    return
+  }
+}
+
 const saveHandler = () => {
   planStore.saveDetails(details.value)
+  if (validateBlank(title.value)) planStore.setTitle(title.value)
 }
 
 const prevViewDate = () => {
@@ -95,6 +112,7 @@ onMounted(() => {
   const planId = parseInt(route.params.id)
   const plan = planStore.getPlan(planId)
   if (!plan) {
+    router.push({ name: 'home' })
     // router.push(errorpage) 404 not found
     return
   }
@@ -111,7 +129,12 @@ onMounted(() => {
     class="w-vw p-24 flex flex-col lg:flex-row justify-center items-center lg:items-start gap-4"
   >
     <section class="flex flex-col gap-2 mb-8 lg:w-[400px] w-full shrink-0">
-      <Input label="계획이름" :value="title" @onChange="(v) => (title = v)" />
+      <Input
+        label="계획이름"
+        :value="title"
+        @onChange="titleHandler"
+        :info="titleInfo ?? undefined"
+      />
       <Calendar
         class="border rounded h-72 bg-white"
         :start="startDate"

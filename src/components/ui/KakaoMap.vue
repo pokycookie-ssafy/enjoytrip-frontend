@@ -124,7 +124,7 @@ watch(
         customOverlay.setZIndex(10000)
       }
     })
-    map.setBounds(bounds)
+    if (markers.length > 0) map.setBounds(bounds)
   },
   { immediate: true }
 )

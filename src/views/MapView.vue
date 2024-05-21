@@ -23,6 +23,6 @@ watch(
 
 <template>
   <main class="w-vw h-screen">
-    <KakaoMap :markers="marker" zoomControl />
+    <KakaoMap :markers="marker" />
   </main>
 </template>

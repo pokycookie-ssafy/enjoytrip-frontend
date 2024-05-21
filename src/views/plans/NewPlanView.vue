@@ -2,8 +2,11 @@
 import Button from '@/components/ui/Button.vue'
 import Calendar from '@/components/ui/Calendar.vue'
 import InfoBox from '@/components/ui/InfoBox.vue'
+import type { IInputInfo } from '@/components/ui/Input.vue'
+import Input from '@/components/ui/Input.vue'
 import { usePlanStore } from '@/stores/plan'
 import type { IPlanRequest } from '@/types/Plan'
+import { validateBlank } from '@/utils/validator'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import axios from 'axios'
 import dayjs from 'dayjs'
@@ -17,6 +20,8 @@ const title = ref('')
 const startDate = ref(new Date())
 const endDate = ref(new Date())
 
+const titleInfo = ref<IInputInfo | null>(null)
+
 const dateFormat = computed(() => {
   const start = dayjs(startDate.value).format('YYYY.MM.DD')
   const end = dayjs(endDate.value).format('YYYY.MM.DD')
@@ -24,6 +29,16 @@ const dateFormat = computed(() => {
 })
 
 const submitHandler = async () => {
+  titleInfo.value = null
+
+  if (!validateBlank(title.value)) {
+    titleInfo.value = {
+      message: '계획 이름을 정해주세요',
+      status: 'danger',
+    }
+    return
+  }
+
   try {
     const planRequest: IPlanRequest = {
       title: title.value,
@@ -42,8 +57,8 @@ const submitHandler = async () => {
   }
 }
 
-const titleHandler = (e: Event) => {
-  title.value = (e.target as HTMLInputElement)?.value ?? ''
+const titleHandler = (value: string) => {
+  title.value = value
 }
 
 const dateHandler = (start: Date, end: Date) => {
@@ -64,11 +79,11 @@ const dateHandler = (start: Date, end: Date) => {
         <h3 class="font-semibold text-zinc-600 pl-1 mb-2">
           1. 계획 이름 정하기
         </h3>
-        <input
-          class="border w-full h-10 rounded outline-none p-1 pl-3 pr-3"
-          placeholder="계획 이름을 입력해주세요."
+        <Input
+          label="계획 이름"
+          :info="titleInfo ?? undefined"
           :value="title"
-          @change="titleHandler"
+          @onChange="titleHandler"
         />
         <InfoBox
           title="Tip"

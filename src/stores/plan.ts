@@ -33,6 +33,19 @@ export const usePlanStore = defineStore('plan', () => {
     return plans.value.find((e) => e.id === currId.value)
   }
 
+  const setTitle = (title: string) => {
+    const tmpPlans = [...plans.value]
+    const tmpPlan = tmpPlans.find((e) => e.id === currId.value)
+
+    if (!tmpPlan) {
+      toast.addToast('계획을 먼저 선택해주세요', 'danger')
+      return
+    }
+
+    tmpPlan.title = title
+    plans.value = tmpPlans
+  }
+
   const saveDetails = (details: IPlanDetail[]) => {
     const tmpPlans = [...plans.value]
     const tmpPlan = tmpPlans.find((e) => e.id === currId.value)
@@ -106,5 +119,6 @@ export const usePlanStore = defineStore('plan', () => {
     removeAttraction,
     saveDetails,
     changeDate,
+    setTitle,
   }
 })
