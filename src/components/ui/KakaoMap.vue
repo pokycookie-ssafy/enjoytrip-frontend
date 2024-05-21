@@ -91,11 +91,12 @@ watch(
     if (!window.kakao || !window.kakao.maps) return
     if (!map) return
 
+    const bounds = new kakao.maps.LatLngBounds()
+
     markers.forEach((data, i) => {
       const position = new kakao.maps.LatLng(data.lat, data.lng)
       const marker = new kakao.maps.Marker({ map, position })
-
-      if (i == 0) map.panTo(position)
+      bounds.extend(position)
 
       // Overlay
       if (data.overlay) {
@@ -123,6 +124,7 @@ watch(
         customOverlay.setZIndex(10000)
       }
     })
+    map.setBounds(bounds)
   },
   { immediate: true }
 )
