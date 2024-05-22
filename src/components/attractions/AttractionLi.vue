@@ -97,9 +97,9 @@ onMounted(() => {
         {{ props.data.title }}
       </h2>
       <span class="flex justify-start items-center text-sm gap-1 font-light">
-        <p class="hover:underline cursor-pointer">{{ sidoName }}</p>
+        <p class="hover:underline cursor-pointer ellipsis">{{ sidoName }}</p>
         <p>/</p>
-        <p class="hover:underline cursor-pointer">{{ gugunName }}</p>
+        <p class="hover:underline cursor-pointer ellipsis">{{ gugunName }}</p>
       </span>
     </div>
 
@@ -116,13 +116,13 @@ onMounted(() => {
       <AttractionStarRating :data="mockStarData" />
     </div>
 
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between gap-2 items-center">
       <div class="flex pl-1 pr-1 gap-5">
         <button
           class="flex justify-normal items-center gap-1 hover:text-indigo-600"
         >
           <Like :value="false" />
-          <p class="text-xs">좋아요 (56)</p>
+          <p class="text-xs ellipsis">좋아요 (56)</p>
         </button>
         <button
           class="flex justify-normal items-center gap-1 hover:text-indigo-600 data-[open=true]:text-indigo-600 data-[open=true]:hover:text-indigo-500"
@@ -130,10 +130,10 @@ onMounted(() => {
           :data-open="reviewOpen"
         >
           <FontAwesomeIcon icon="fa-regular fa-star" />
-          <p class="text-xs">리뷰 (1624)</p>
+          <p class="text-xs ellipsis">리뷰 (1624)</p>
         </button>
       </div>
-      <Button @onClick="addHandler">내 계획에 추가</Button>
+      <Button class="ellipsis" @onClick="addHandler">내 계획에 추가</Button>
     </div>
 
     <!-- comment section -->

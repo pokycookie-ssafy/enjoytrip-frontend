@@ -14,3 +14,10 @@ export interface IComment {
   created: Date
   isReply: boolean
 }
+
+export interface IMyComment {
+  id: number
+  boardId: number
+  content: string
+  created: Date
+}

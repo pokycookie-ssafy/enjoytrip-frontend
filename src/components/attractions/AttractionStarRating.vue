@@ -36,7 +36,9 @@ watch(
     class="flex flex-col gap-3 bg-zinc-100 border rounded p-4 overflow-hidden"
   >
     <div class="flex justify-between items-start">
-      <h2 class="text-zinc-600 font-semibold text-base">사용자 리뷰</h2>
+      <h2 class="text-zinc-600 font-semibold text-base ellipsis">
+        사용자 리뷰
+      </h2>
       <button
         class="data-[open=true]:rotate-180 transition-all"
         :data-open="isOpen"
@@ -50,7 +52,7 @@ watch(
     </div>
     <span class="flex justify-start items-center gap-2">
       <StarRating class="w-24" :value="7" readonly />
-      <p class="font-thin text-sm text-indigo-600">(리뷰 1624개)</p>
+      <p class="font-thin text-sm text-indigo-600 ellipsis">(리뷰 1624개)</p>
     </span>
     <div
       class="flex flex-col gap-2 data-[open=true]:mt-2 data-[open=true]:h-[132px] h-0 transition-all overflow-hidden"
