@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {
+  createRouter,
+  createWebHashHistory,
+  createWebHistory,
+} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/auths/LoginView.vue'
 import SignupView from '@/views/auths/SignupView.vue'
@@ -25,7 +29,7 @@ import MyLikeAttractionsView from '@/views/users/MyLikeAttractionsView.vue'
 import NewReviewView from '@/views/reviews/NewReviewView.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/:pathMatch(.*)*',
@@ -140,11 +144,11 @@ const router = createRouter({
           component: MyLikeReviewsView,
         },
       ],
-      // beforeEnter: (to, from, next) => {
-      //   const authStore = useAuthStore()
-      //   if (authStore.user) next()
-      //   else next({ name: 'login' })
-      // },
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.user) next()
+        else next({ name: 'login' })
+      },
     },
     {
       path: '/reviews',
@@ -164,20 +168,20 @@ const router = createRouter({
       path: '/plans/new',
       name: 'newPlan',
       component: NewPlanView,
-      // beforeEnter: (to, from, next) => {
-      //   const authStore = useAuthStore()
-      //   if (authStore.user) next()
-      //   else next({ name: 'login' })
-      // },
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.user) next()
+        else next({ name: 'login' })
+      },
     },
     {
       path: '/plans/:id',
       component: PlanDetailView,
-      // beforeEnter: (to, from, next) => {
-      //   const authStore = useAuthStore()
-      //   if (authStore.user) next()
-      //   else next({ name: 'login' })
-      // },
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.user) next()
+        else next({ name: 'login' })
+      },
     },
   ],
 })
