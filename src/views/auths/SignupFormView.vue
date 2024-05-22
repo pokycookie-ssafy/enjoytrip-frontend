@@ -10,6 +10,10 @@ import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
 import { validateBlank, validatePassword } from '@/utils/validator'
 import { onMounted, ref, watch } from 'vue'
 
+const emits = defineEmits<{
+  (e: 'onNext'): void
+}>()
+
 const { addToast } = useToastStore()
 
 const name = ref('')
@@ -137,6 +141,7 @@ const submitHandler = async () => {
       gender: gender.value,
     })
     console.log(data)
+    emits('onNext')
   } catch (err) {
     console.error(err)
   }
