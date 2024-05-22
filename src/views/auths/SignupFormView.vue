@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import Button from '@/components/ui/Button.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import Input, { type IInputInfo } from '@/components/ui/Input.vue'
@@ -6,7 +7,6 @@ import type { IResponse } from '@/types/Response'
 import { getLastDate, getLastYear } from '@/utils/calendar'
 import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
 import { validatePassword } from '@/utils/validator'
-import axios from 'axios'
 import { onMounted, ref, watch } from 'vue'
 
 const name = ref('')
@@ -41,7 +41,7 @@ const submitHandler = async () => {
   }
 
   try {
-    const { data } = await axios.post<IResponse<any>>('/users', {
+    const { data } = await api.post<IResponse<any>>('/users', {
       name: name.value,
       nickname: nickname.value,
       email: email.value,

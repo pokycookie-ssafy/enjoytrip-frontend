@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import AttractionNav from '@/components/attractions/AttractionNav.vue'
 import ReviewLi from '@/components/reviews/ReviewLi.vue'
-import axios from 'axios'
+import type { IResponse } from '@/types/Response'
+import type { IReview, IReviewResponse } from '@/types/Review'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
 
-const reviews = ref([])
+const reviews = ref<IReview[]>([])
 const pageIdx = ref(0)
 
 const filterHandler = (query: string) => {
@@ -21,12 +23,15 @@ const fetchReviews = async () => {
   else query = `${query}&page=${pageIdx.value}&size=${15}`
 
   try {
-    // const { data } = await axios.get(
-    //   `/reviews${query}`
-    // )
-    // reviews.value = [...reviews.value, ...data.data.content]
-    // pageIdx.value++
-    // console.log(data)
+    const { data } = await api.get<IResponse<IReviewResponse>>(
+      `/reviews${query}`
+    )
+    const fetchedReviews: IReview[] = data.data.content.map((e) => {
+      return { ...e, review_date: new Date(e.review_date) }
+    })
+    reviews.value = [...reviews.value, ...fetchedReviews]
+    pageIdx.value++
+    console.log(data)
   } catch (err) {}
 }
 
@@ -35,58 +40,10 @@ watch(
   () => {
     pageIdx.value = 0
     reviews.value = []
+    fetchReviews()
   },
   { immediate: true }
 )
-
-const mock = [
-  {
-    writer: 'user1',
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    imgSrc: ['/file/review/test.jpg'],
-    time: new Date(),
-  },
-  {
-    writer: 'user1',
-    content: 'hello',
-    imgSrc: ['/file/review/test.jpg', '/file/review/test2.jpg'],
-    time: new Date(),
-  },
-  {
-    writer: 'user1',
-    content: 'hello',
-    imgSrc: [
-      '/file/review/test.jpg',
-      '/file/review/test2.jpg',
-      '/file/review/test3.jpg',
-    ],
-    time: new Date(),
-  },
-  {
-    writer: 'user1',
-    content: 'hello',
-    imgSrc: [
-      '/file/review/test.jpg',
-      '/file/review/test2.jpg',
-      '/file/review/test3.jpg',
-      '/file/review/test4.jpg',
-    ],
-    time: new Date(),
-  },
-  {
-    writer: 'user1',
-    content: 'hello',
-    imgSrc: [
-      '/file/review/test.jpg',
-      '/file/review/test2.jpg',
-      '/file/review/test3.jpg',
-      '/file/review/test4.jpg',
-      '/file/review/test.jpg',
-    ],
-    time: new Date(),
-  },
-]
 </script>
 
 <template>
@@ -95,13 +52,18 @@ const mock = [
       <AttractionNav class="md:flex hidden" @onSubmit="filterHandler" />
       <ul class="flex flex-col gap-4 flex-1">
         <ReviewLi
-          v-for="e in mock"
+          v-for="e in reviews"
           :writer="e.writer"
-          :content="e.content"
-          :imgSrc="e.imgSrc"
-          :time="e.time"
+          :content="e.review_content"
+          :imgSrc="e.images"
+          :time="e.review_date"
+          :attraction="e.attractionDto"
+          :point="e.point"
+          :profile="e.writer_image"
+          :reviewId="e.review_id"
         />
       </ul>
+      <InfiniteScroll v-if="pageIdx > 0" @onObserve="fetchReviews" />
     </section>
   </main>
 </template>

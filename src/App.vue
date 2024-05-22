@@ -10,6 +10,7 @@ import AttractionDnD from './components/plan/AttractionDnD.vue'
 import axios from 'axios'
 import { useAuthStore } from './stores/authStore'
 import type { IUser } from './types/User'
+import { api } from './axios.config'
 
 const authStore = useAuthStore()
 
@@ -27,7 +28,16 @@ onBeforeMount(() => {
   const user: IUser = userItem ? JSON.parse(userItem) : null
 
   if (auth && user) {
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + auth
+    api.interceptors.request.use(
+      (config) => {
+        config.headers['Authorization'] = 'Bearer ' + auth
+        return config
+      },
+      (err) => {
+        return Promise.reject(err)
+      }
+    )
+    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + auth
     authStore.login(user)
   }
 })

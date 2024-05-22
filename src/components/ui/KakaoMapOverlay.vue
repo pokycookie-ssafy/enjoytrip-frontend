@@ -11,14 +11,9 @@ const alert = () => {
 <template>
   <div class="flex flex-col items-center">
     <div
-      class="w-64 h-28 p-3 bg-zinc-700 cursor-default rounded-lg transition-all shadow-md shadow-zinc-800"
+      class="w-52 h-12 p-3 bg-zinc-700 cursor-default rounded-lg transition-all shadow-md shadow-zinc-800"
     >
-      <button
-        class="w-full h-8 rounded bg-indigo-600 text-sm text-white hover:bg-indigo-500"
-        onclick="console.log('eee')"
-      >
-        {{ props.message }}
-      </button>
+      {{ props.message }}
     </div>
     <div class="tri"></div>
   </div>

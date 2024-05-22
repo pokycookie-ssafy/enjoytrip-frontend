@@ -35,4 +35,5 @@ export interface IBoardDetailResponse {
   regDate: string
   updateDate: string
   mine: boolean
+  images: string[]
 }

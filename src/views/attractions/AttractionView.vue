@@ -5,10 +5,10 @@ import AttractionLi from '@/components/attractions/AttractionLi.vue'
 import AttractionNav from '@/components/attractions/AttractionNav.vue'
 import type { IAttraction, IAttractionResponse } from '@/types/Attraction'
 import { ref, watch } from 'vue'
-import axios from 'axios'
 import InfiniteScroll from '@/components/ui/InfiniteScroll.vue'
 import type { IResponse } from '@/types/Response'
 import { useRoute, useRouter } from 'vue-router'
+import { api } from '@/axios.config'
 
 const route = useRoute()
 const router = useRouter()
@@ -32,7 +32,7 @@ const fetchAttractions = async () => {
   else query = `${query}&page=${pageIdx.value}&size=${15}`
 
   try {
-    const { data } = await axios.get<IResponse<IAttractionResponse>>(
+    const { data } = await api.get<IResponse<IAttractionResponse>>(
       `/attractions${query}`
     )
     attractions.value = [...attractions.value, ...data.data.content]

@@ -14,6 +14,7 @@ watch(
     const tmpMarker: IMarker[] = attractions.map((e) => ({
       lat: e.latitude,
       lng: e.longitude,
+      overlay: `<div class="flex flex-col items-center"><div class="p-2 bg-zinc-700 cursor-default rounded transition-all ellipsis shadow-md text-sm shadow-zinc-800 text-white">${e.title}</div><div class="tri"></div></div>`,
     }))
     marker.value = tmpMarker
   },

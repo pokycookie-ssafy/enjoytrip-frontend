@@ -4,6 +4,7 @@ import noProfile from '@/assets/img/noProfile.svg'
 
 const props = defineProps<{
   editable?: boolean
+  src?: string
 }>()
 </script>
 
@@ -11,7 +12,10 @@ const props = defineProps<{
   <div
     class="flex justify-center items-center rounded-full bg-zinc-300 relative shrink-0"
   >
-    <img class="text-white w-full h-full p-[25%]" :src="noProfile" />
+    <img
+      class="text-white w-full h-full p-[25%]"
+      :src="props.src ?? noProfile"
+    />
     <button
       v-if="props.editable"
       class="w-7 h-7 flex justify-center items-center rounded-full bg-indigo-600 absolute right-0 bottom-0 hover:bg-indigo-500"

@@ -4,6 +4,7 @@ import StarRating from '@/components/ui/StarRating.vue'
 
 const props = defineProps<{
   attraction: IAttraction | null
+  point: number
 }>()
 </script>
 
@@ -16,7 +17,7 @@ const props = defineProps<{
       <h3 class="text-zinc-600 font-semibold text-base flex-1 ellipsis">
         {{ props.attraction?.title }}
       </h3>
-      <StarRating class="w-24" :value="7" readonly />
+      <StarRating class="w-24" :value="props.point" readonly />
     </div>
     <div class="flex justify-between gap-2 items-center">
       <p class="ellipsis flex-1 text-xs">{{ props.attraction?.addr1 ?? '' }}</p>

@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import Button from '@/components/ui/Button.vue'
 import StarRating from '@/components/ui/StarRating.vue'
 import UploadFileDND from '@/components/ui/UploadFileDND.vue'
 import UploadedImgPreview from '@/components/ui/UploadedImgPreview.vue'
+import { useToastStore } from '@/stores/toast'
 import type { IAttraction } from '@/types/Attraction'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { QuillEditor } from '@vueup/vue-quill'
@@ -31,7 +33,38 @@ const content = ref('')
 const uploadFiles = ref<IUploadedImage[]>([])
 const rate = ref(0)
 
-const sumbmitHandler = () => {}
+const { addToast } = useToastStore()
+
+const sumbmitHandler = async () => {
+  const formData = new FormData()
+  formData.append('content_id', props.attraction.contentId.toString())
+  formData.append('content', content.value)
+  formData.append('point', rate.value.toString())
+  uploadFiles.value.forEach((upload) => {
+    formData.append('images', upload.file)
+  })
+
+  if (rate.value === 0) {
+    addToast('별점을 등록해주세요', 'danger')
+    return
+  }
+
+  try {
+    const { data } = await api.post(`/reviews`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    console.log(data)
+    if (data.status === 'success') {
+      emits('onSubmit')
+    } else {
+      addToast('리뷰 등록에 실패했습니다', 'danger')
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 const uploadFile = (files: File[]) => {
   const tmpUploadFiles: IUploadedImage[] = []

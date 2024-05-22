@@ -12,7 +12,7 @@ const props = defineProps<{
   writer: string
   content: string
   time: Date
-  boardId: number
+  reviewId: number
   isReply?: boolean
   commentHandler: () => void
 }>()
@@ -47,10 +47,10 @@ const replyHandler = () => {
 const commentSubmitHandler = async (comment: string) => {
   try {
     if (!authStore.user) throw new Error()
-    const { data } = await api.post(`/boards/comments`, {
+    const { data } = await api.post(`/reviews/comments`, {
       userId: authStore.user.id,
       content: comment,
-      boardId: props.boardId,
+      reviewId: props.reviewId,
       parentId: props.id,
     })
     console.log(data)

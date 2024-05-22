@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { IAttraction } from '@/types/Attraction'
 import AttractionCategoryLabel from '../attractions/AttractionCategoryLabel.vue'
-import { ref } from 'vue'
-import CheckBox from '../ui/CheckBox.vue'
+import { computed } from 'vue'
 import contentType from '@/assets/data/contentType'
 import { usePlanStore } from '@/stores/plan'
-import type { IContentType } from '@/types/ContentType'
+import { api } from '@/axios.config'
 
 const props = defineProps<{
   data: IAttraction
@@ -14,12 +13,25 @@ const props = defineProps<{
 
 const planStore = usePlanStore()
 
-const type = ref<IContentType | null>(
-  contentType.find((e) => e.code === props.data.contentTypeId) ?? null
-)
+const type = computed(() => {
+  return contentType.find((e) => e.code === props.data.contentTypeId) ?? null
+})
 
-const deleteHandler = () => {
-  planStore.removeAttraction(props.index)
+const deleteHandler = async () => {
+  try {
+    if (!planStore.plan?.id) return
+
+    const planId = planStore.plan.id
+    const attractionId = props.data.contentId
+
+    const { data } = await api.delete(
+      `/plans/candidates?id=${planId}&content_id=${attractionId}`
+    )
+    console.log(data)
+    if (data.status === 'success') planStore.removeAttraction(props.index)
+  } catch (err) {
+    console.error(err)
+  }
 }
 </script>
 

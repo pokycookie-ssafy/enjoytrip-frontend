@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import AttractionCard from '@/components/frame/AttractionCard.vue'
 import Button from '@/components/ui/Button.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
@@ -6,6 +7,9 @@ import ProfileImg from '@/components/ui/ProfileImg.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { usePlanStore } from '@/stores/plan'
 import { useToastStore } from '@/stores/toast'
+import type { IAttraction } from '@/types/Attraction'
+import dayjs from 'dayjs'
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
@@ -21,6 +25,46 @@ const detailPlanHandler = () => {
   }
   router.push(`/plans/${planId}`)
 }
+
+const setPlanHandler = async (id: number) => {
+  try {
+    const { data } = await api.get(`/plans/candidates?id=${id}`)
+    console.log(data)
+    planStore.setPlan(id)
+    if (!data?.data?.candidates) return
+    const attractions = data.data.candidates as IAttraction[]
+    planStore.setAttractions(attractions, id)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const fetchPlans = async () => {
+  try {
+    const { data, status } = await api.get('/plans')
+    console.log(status)
+    console.log(data)
+    let lastId = -1
+    data.data.forEach((e: any) => {
+      lastId = e.id
+      planStore.createPlan({
+        id: e.id,
+        title: e.title,
+        startDate: dayjs(e.startDate).startOf('day').toDate(),
+        endDate: dayjs(e.endDate).endOf('day').toDate(),
+        attractions: [],
+        details: [],
+      })
+    })
+    if (data.data.length > 0) setPlanHandler(lastId)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+onMounted(() => {
+  fetchPlans()
+})
 </script>
 
 <template>
@@ -59,7 +103,7 @@ const detailPlanHandler = () => {
           class="dropdown-li"
           v-for="e in planStore.plans"
           :key="e.id"
-          @click="planStore.setPlan(e.id)"
+          @click="setPlanHandler(e.id)"
         >
           {{ e.title }}
         </button>

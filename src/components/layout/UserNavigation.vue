@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import Caption from '../ui/Caption.vue'
 import { useToastStore } from '@/stores/toast'
 import { useAuthStore } from '@/stores/authStore'
-import axios from 'axios'
+import { api } from '@/axios.config'
 
 const hover = ref(false)
 
@@ -22,7 +22,7 @@ const mouseoutHandler = () => {
 }
 
 const logout = async () => {
-  axios.get('/logout')
+  api.get('/logout')
   authStore.logout()
   sessionStorage.removeItem('auth')
   sessionStorage.removeItem('user')

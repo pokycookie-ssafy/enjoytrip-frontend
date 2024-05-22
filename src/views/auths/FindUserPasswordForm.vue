@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
 import type { IResponse } from '@/types/Response'
 import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
-import axios from 'axios'
 import { ref } from 'vue'
 
 const email = ref('')
@@ -12,7 +12,7 @@ const authCode = ref('')
 
 const submitHandler = async () => {
   try {
-    const { data } = await axios.post<IResponse<any>>('/users/findpw', {
+    const { data } = await api.post<IResponse<any>>('/users/findpw', {
       email: email.value,
       phone: phone.value,
     })

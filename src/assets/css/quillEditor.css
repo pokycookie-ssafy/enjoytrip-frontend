@@ -20,6 +20,13 @@
   border: none;
 }
 
+.no-border.small .ql-container.ql-snow {
+  min-height: 0px;
+}
+.no-border.small .ql-container .ql-editor {
+  padding: 0px 5px;
+}
+
 .no-border .ql-container .ql-editor {
   padding: 1.25rem 0.75rem 1.25rem 0.75rem;
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
 import InputGroup from '@/components/ui/InputGroup.vue'
@@ -9,7 +10,6 @@ import { useToastStore } from '@/stores/toast'
 import type { IResponse } from '@/types/Response'
 import type { IUserResponse } from '@/types/User'
 import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
-import axios from 'axios'
 import { onMounted, ref } from 'vue'
 
 const authStore = useAuthStore()
@@ -24,7 +24,7 @@ const newPasswordCheck = ref('')
 
 const editHandler = async () => {
   try {
-    const { data } = await axios.patch('/users', {
+    const { data } = await api.patch('/users', {
       nickname: nickname.value,
       phone: phone.value,
     })
@@ -39,7 +39,7 @@ const editHandler = async () => {
 
 const passwordEditHandler = async () => {
   try {
-    const { data } = await axios.patch('/users', {
+    const { data } = await api.patch('/users', {
       password: newPassword.value,
     })
     console.log(data)
@@ -54,7 +54,7 @@ const passwordEditHandler = async () => {
 onMounted(async () => {
   if (!authStore.user) return
   try {
-    const { data } = await axios.get<IResponse<IUserResponse>>('/users')
+    const { data } = await api.get<IResponse<IUserResponse>>('/users')
     nickname.value = data.data.nickname
     name.value = data.data.name
     phone.value = data.data.phone

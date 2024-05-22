@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import Button from '@/components/ui/Button.vue'
 import Calendar from '@/components/ui/Calendar.vue'
 import InfoBox from '@/components/ui/InfoBox.vue'
@@ -8,7 +9,6 @@ import { usePlanStore } from '@/stores/plan'
 import type { IPlanRequest } from '@/types/Plan'
 import { validateBlank } from '@/utils/validator'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import axios from 'axios'
 import dayjs from 'dayjs'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -46,12 +46,15 @@ const submitHandler = async () => {
       endDate: endDate.value,
     }
 
-    // const { data } = await axios.post('/plans', planRequest)
-    // const id = data.id;
-    const id = Math.round(Math.random() * 10000) // mock
+    const { data } = await api.post('/plans', {
+      title: title.value,
+      start_date: dayjs(startDate.value).format('YYYY-MM-DD'),
+      end_date: dayjs(endDate.value).format('YYYY-MM-DD'),
+    })
+    const id = data.data
+    console.log(data)
     planStore.createPlan({ ...planRequest, id, attractions: [], details: [] })
-    // router.push({}) // 계획 페이지로 이동
-    router.push('/') // mock
+    router.push({ name: 'home' })
   } catch (err) {
     console.error(err)
   }

@@ -1,18 +1,40 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import MyPlanLi from '@/components/users/MyPlanLi.vue'
+import { usePlanStore } from '@/stores/plan'
 import type { IPlan } from '@/types/Plan'
-import axios from 'axios'
+import dayjs from 'dayjs'
 import { onMounted, ref } from 'vue'
 
 const plans = ref<IPlan[]>([])
+const planStore = usePlanStore()
 
 const fetchPlans = async () => {
   try {
-    const { data } = await axios.get('')
+    const { data } = await api.get('/plans')
+    const tmpPlan: IPlan[] = []
+
+    data.data.forEach((e: any) => {
+      tmpPlan.push({
+        id: e.id,
+        title: e.title,
+        startDate: dayjs(e.startDate).startOf('day').toDate(),
+        endDate: dayjs(e.endDate).endOf('day').toDate(),
+        attractions: [],
+        details: [],
+      })
+    })
+    plans.value = tmpPlan
+
     console.log(data)
+    console.log(tmpPlan)
   } catch (err) {
     console.error(err)
   }
+}
+
+const refresh = () => {
+  plans.value = planStore.plansR
 }
 
 onMounted(() => {
@@ -24,8 +46,7 @@ onMounted(() => {
   <section class="flex-1 flex justify-center overflow-y-auto">
     <div class="flex flex-col gap-8 w-full max-w-[800px] h-fit pt-24 p-14">
       <ul class="flex flex-col gap-4">
-        <!-- <MyPlanLi :plan="plan" v-for="plan in plans" /> -->
-        <MyPlanLi v-for="i in 10" />
+        <MyPlanLi :plan="plan" v-for="plan in plans" @onDelete="refresh" />
       </ul>
     </div>
   </section>

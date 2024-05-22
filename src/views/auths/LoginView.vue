@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import Button from '@/components/ui/Button.vue'
 import Input, { type IInputInfo } from '@/components/ui/Input.vue'
 import { useAuthStore } from '@/stores/authStore'
@@ -34,7 +35,16 @@ const loginFailHandler = (data: string) => {
 }
 
 const loginHandler = (data: ILoginResponse) => {
-  axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.accessToken
+  api.interceptors.request.use(
+    (config) => {
+      config.headers['Authorization'] = 'Bearer ' + data.accessToken
+      return config
+    },
+    (err) => {
+      return Promise.reject(err)
+    }
+  )
+  // axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.accessToken
   authStore.login(data)
   sessionStorage.setItem('auth', data.accessToken)
   sessionStorage.setItem('user', JSON.stringify(authStore.user))
@@ -47,7 +57,7 @@ const submitHandler = async () => {
   passwordInfo.value = null
 
   try {
-    const { data } = await axios.post<IResponse<any>>('/login', {
+    const { data } = await api.post<IResponse<any>>('/login', {
       email: email.value,
       password: password.value,
     })

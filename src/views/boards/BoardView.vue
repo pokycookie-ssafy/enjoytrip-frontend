@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import axios from 'axios'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { IBoard, IBoardResponse } from '@/types/Board'
@@ -7,6 +6,7 @@ import BoardLi from '@/components/boards/BoardLi.vue'
 import BoardNav from '@/components/boards/BoardNav.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import type { IResponse } from '@/types/Response'
+import { api } from '@/axios.config'
 
 const route = useRoute()
 const router = useRouter()
@@ -18,7 +18,7 @@ const totalCount = ref(1)
 
 const getData = async () => {
   try {
-    const { data } = await axios.get<IResponse<IBoardResponse>>(
+    const { data } = await api.get<IResponse<IBoardResponse>>(
       `/boards?page=${pageIdx.value - 1}&size=${15}`
     )
     // const { data: noticeData } = await axios.get<IBoard[]>('/notices.json')
@@ -26,7 +26,7 @@ const getData = async () => {
     console.log(data)
     const boardData = data.data.content
     const tmpBoard: IBoard[] = []
-    boardData.forEach((e) => {
+    boardData.forEach((e: any) => {
       tmpBoard.push({
         id: e.id,
         title: e.title,

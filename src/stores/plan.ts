@@ -33,9 +33,9 @@ export const usePlanStore = defineStore('plan', () => {
     return plans.value.find((e) => e.id === currId.value)
   }
 
-  const setTitle = (title: string) => {
+  const setTitle = (title: string, id: number) => {
     const tmpPlans = [...plans.value]
-    const tmpPlan = tmpPlans.find((e) => e.id === currId.value)
+    const tmpPlan = tmpPlans.find((e) => e.id === id)
 
     if (!tmpPlan) {
       toast.addToast('계획을 먼저 선택해주세요', 'danger')
@@ -46,9 +46,9 @@ export const usePlanStore = defineStore('plan', () => {
     plans.value = tmpPlans
   }
 
-  const saveDetails = (details: IPlanDetail[]) => {
+  const saveDetails = (details: IPlanDetail[], id: number) => {
     const tmpPlans = [...plans.value]
-    const tmpPlan = tmpPlans.find((e) => e.id === currId.value)
+    const tmpPlan = tmpPlans.find((e) => e.id === id)
 
     if (!tmpPlan) {
       toast.addToast('계획을 먼저 선택해주세요', 'danger')
@@ -60,9 +60,9 @@ export const usePlanStore = defineStore('plan', () => {
     toast.addToast('저장되었습니다')
   }
 
-  const changeDate = (start: Date, end: Date) => {
+  const changeDate = (start: Date, end: Date, id: number) => {
     const tmpPlans = [...plans.value]
-    const tmpPlan = tmpPlans.find((e) => e.id === currId.value)
+    const tmpPlan = tmpPlans.find((e) => e.id === id)
 
     if (!tmpPlan) {
       toast.addToast('계획을 먼저 선택해주세요', 'danger')
@@ -71,6 +71,26 @@ export const usePlanStore = defineStore('plan', () => {
 
     tmpPlan.startDate = start
     tmpPlan.endDate = end
+    plans.value = tmpPlans
+  }
+
+  const setAttractions = (attractions: IAttraction[], id: number) => {
+    const tmpPlans = [...plans.value]
+    const tmpPlan = tmpPlans.find((e) => e.id === id)
+    if (!tmpPlan) return
+
+    tmpPlan.attractions = []
+    attractions.forEach((e) => tmpPlan.attractions.push(e))
+    plans.value = tmpPlans
+  }
+
+  const setDetails = (details: IPlanDetail[], id: number) => {
+    const tmpPlans = [...plans.value]
+    const tmpPlan = tmpPlans.find((e) => e.id === id)
+    if (!tmpPlan) return
+
+    tmpPlan.details = []
+    details.forEach((e) => tmpPlan.details.push(e))
     plans.value = tmpPlans
   }
 
@@ -109,9 +129,17 @@ export const usePlanStore = defineStore('plan', () => {
     toast.addToast('관광지가 삭제되었습니다')
   }
 
+  const deletePlan = (id: number) => {
+    const tmpPlans = [...plans.value]
+    const idx = tmpPlans.findIndex((e) => e.id === id)
+    tmpPlans.splice(idx, 1)
+    plans.value = tmpPlans
+  }
+
   return {
     plan: currentPlan,
     plans: planList,
+    plansR: plans,
     createPlan,
     setPlan,
     getPlan,
@@ -120,5 +148,8 @@ export const usePlanStore = defineStore('plan', () => {
     saveDetails,
     changeDate,
     setTitle,
+    setAttractions,
+    setDetails,
+    deletePlan,
   }
 })

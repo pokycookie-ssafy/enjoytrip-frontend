@@ -9,11 +9,12 @@ import type { IAttraction } from '@/types/Attraction'
 import type { IPlanDetail } from '@/types/Plan'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import dayjs from 'dayjs'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import isBetween from 'dayjs/plugin/isBetween'
 import Button from '@/components/ui/Button.vue'
 import { validateBlank } from '@/utils/validator'
+import { api } from '@/axios.config'
 
 dayjs.extend(isBetween)
 
@@ -21,6 +22,7 @@ const route = useRoute()
 const router = useRouter()
 const planStore = usePlanStore()
 
+const planId = ref(-1)
 const title = ref('')
 const startDate = ref(new Date())
 const endDate = ref(new Date())
@@ -55,9 +57,65 @@ const titleHandler = (value: string) => {
   }
 }
 
-const saveHandler = () => {
-  planStore.saveDetails(details.value)
-  if (validateBlank(title.value)) planStore.setTitle(title.value)
+const fetchHandler = async () => {
+  try {
+    const { data } = await api.get(`/plans/details?id=${planId.value}`)
+    console.log(data)
+    console.log(data.data.planDetails)
+    planStore.setDetails(
+      data.data.planDetails.map((e: any) => ({
+        attraction: e.attraction,
+        start: new Date(e.start_date_time),
+        end: new Date(e.end_date_time),
+      })),
+      planId.value
+    )
+
+    const plan = planStore.getPlan(planId.value)
+    if (!plan) {
+      router.push({ name: 'home' })
+      return
+    }
+    attractions.value = [...plan.attractions]
+    details.value = [...plan.details]
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const saveHandler = async () => {
+  planStore.saveDetails(details.value, planId.value)
+  if (validateBlank(title.value)) planStore.setTitle(title.value, planId.value)
+  try {
+    const planDetails = details.value
+      .filter((e) => {
+        return dayjs(e.start).isBetween(
+          viewStartDate.value,
+          viewEndDate.value,
+          'day',
+          '[]'
+        )
+      })
+      .map((e) => {
+        return {
+          content_id: e.attraction.contentId,
+          start_date_time: dayjs(e.start).format('YYYY-MM-DDTHH:mm'),
+          end_date_time: dayjs(e.end).format('YYYY-MM-DDTHH:mm'),
+        }
+      })
+    const { data } = await api.post(`/plans/details`, {
+      planId: planId.value,
+      planDetails,
+      planRequest: {
+        title: title.value,
+        start_date: dayjs(startDate.value).format('YYYY-MM-DD'),
+        end_date: dayjs(endDate.value).format('YYYY-MM-DD'),
+      },
+    })
+    console.log(data)
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 const prevViewDate = () => {
@@ -104,24 +162,29 @@ watch([startDate, endDate], ([s, e]) => {
   viewStartDate.value = s
   viewEndDate.value =
     dayjs(e).diff(s, 'day') < 3 ? e : dayjs(s).add(2, 'day').toDate()
-  planStore.changeDate(s, e)
+  planStore.changeDate(s, e, planId.value)
 })
 
-onMounted(() => {
-  if (Array.isArray(route.params.id)) return
-  const planId = parseInt(route.params.id)
-  const plan = planStore.getPlan(planId)
-  if (!plan) {
-    router.push({ name: 'home' })
-    // router.push(errorpage) 404 not found
-    return
-  }
-  title.value = plan.title
-  startDate.value = plan.startDate
-  endDate.value = plan.endDate
-  attractions.value = [...plan.attractions]
-  details.value = [...plan.details]
-})
+watch(
+  () => route.params.id,
+  () => {
+    if (Array.isArray(route.params.id)) return
+    planId.value = parseInt(route.params.id)
+    const plan = planStore.getPlan(planId.value)
+    if (!plan) {
+      router.push({ name: 'home' })
+      // router.push(errorpage) 404 not found
+      return
+    }
+    title.value = plan.title
+    startDate.value = plan.startDate
+    endDate.value = plan.endDate
+    attractions.value = [...plan.attractions]
+    details.value = [...plan.details]
+    fetchHandler()
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -151,7 +214,7 @@ onMounted(() => {
       <ul
         class="flex flex-col flex-1 gap-2 w-full max-h-96 overflow-y-auto p-2 border rounded"
       >
-        <AttractionDnDCard v-for="e in planStore.plan?.attractions" :data="e" />
+        <AttractionDnDCard v-for="e in attractions" :data="e" />
       </ul>
       <div class="w-full border p-3 rounded">
         <PlanResult :plans="details" />

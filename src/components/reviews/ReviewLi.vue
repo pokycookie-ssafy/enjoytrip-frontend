@@ -6,22 +6,86 @@ import ProfileImg from '@/components/ui/ProfileImg.vue'
 import MutliImage from '@/components/ui/MutliImage.vue'
 import Like from '@/components/ui/Like.vue'
 import CommentInput from '@/components/ui/CommentInput.vue'
-import Comment from '@/components/ui/Comment.vue'
 import AttractionReviewCard from '@/components/reviews/AttractionReviewCard.vue'
 import type { IAttraction } from '@/types/Attraction'
-import axios from 'axios'
 import Pagination from '../ui/Pagination.vue'
+import { QuillEditor } from '@vueup/vue-quill'
+import Comment from '../ui/Comment.vue'
+import CommentReview from '../ui/CommentReview.vue'
+import type { IComment, ICommentResponse } from '@/types/Comment'
+import { useAuthStore } from '@/stores/authStore'
+import { api } from '@/axios.config'
+import type { IResponseC } from '@/types/Response'
 
 const props = defineProps<{
   content: string
   writer: string
   time: Date
   imgSrc: string[]
+  attraction: IAttraction
+  point: number
+  profile: string
+  reviewId: number
 }>()
 
+const authStore = useAuthStore()
+
+const comments = ref<IComment[]>([])
 const commentOpen = ref(false)
-const mockAttraction = ref<IAttraction | null>(null)
 const pageIdx = ref(1)
+const commentCount = ref(0)
+const like = ref(false)
+
+const likeHandler = async () => {}
+
+const commentSubmitHandler = async (comment: string) => {
+  try {
+    if (!authStore.user) throw new Error()
+    const { data } = await api.post(`/reviews/comments`, {
+      userId: authStore.user.id,
+      content: comment,
+      reviewId: props.reviewId,
+      parentId: null,
+    })
+    console.log(data)
+    commentHandler()
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const commentHandler = async () => {
+  try {
+    const { data } = await api.get<IResponseC<ICommentResponse[]>>(
+      `/reviews/comments/${props.reviewId}`
+    )
+    console.log(data)
+    const tmpComments: IComment[] = []
+    commentCount.value = data.cnt
+
+    data.data.forEach((e) => {
+      tmpComments.push({
+        id: e.id,
+        writer: e.writer,
+        content: e.content,
+        created: new Date(e.commentCreatedDate),
+        isReply: false,
+      })
+      e.commentList.forEach((e) => {
+        tmpComments.push({
+          id: e.id,
+          writer: e.writer,
+          content: e.content,
+          created: new Date(e.commentCreatedDate),
+          isReply: true,
+        })
+      })
+    })
+    comments.value = tmpComments
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
@@ -31,9 +95,8 @@ const timeString = computed(() => {
   return dayjs(props.time).format('YY.MM.DD HH:mm')
 })
 
-onMounted(async () => {
-  const { data } = await axios<IAttraction>('/api/attraction.json')
-  mockAttraction.value = data
+onMounted(() => {
+  commentHandler()
 })
 </script>
 
@@ -43,7 +106,7 @@ onMounted(async () => {
   >
     <div class="flex justify-between items-start">
       <div class="flex items-center gap-2">
-        <ProfileImg class="w-10 h-10" />
+        <ProfileImg class="w-10 h-10" :src="props.profile" />
         <span>
           <h2 class="text-zinc-700">{{ props.writer }}</h2>
           <p class="text-xs text-zinc-400 font-light">{{ timeString }}</p>
@@ -57,22 +120,29 @@ onMounted(async () => {
       </button>
     </div>
 
-    <div class="flex flex-col gap-3 pl-1 pr-1">
-      <h3 class="text-zinc-600 text-ellipsis overflow-hidden line-clamp-3">
-        {{ content }}
-      </h3>
-    </div>
+    <section class="no-border small">
+      <QuillEditor
+        theme="snow"
+        readOnly
+        :content="content"
+        contentType="html"
+        :options="{ modules: { toolbar: false } }"
+      />
+    </section>
 
     <div class="flex flex-col gap-2">
-      <MutliImage :imgSrc="props.imgSrc" />
-      <AttractionReviewCard :attraction="mockAttraction" />
+      <MutliImage :imgSrc="props.imgSrc" v-if="props.imgSrc.length > 0" />
+      <AttractionReviewCard
+        :attraction="props.attraction"
+        :point="props.point"
+      />
     </div>
 
     <div class="flex pl-1 pr-1 gap-5">
       <button
         class="flex justify-normal items-center gap-1 hover:text-indigo-600"
       >
-        <Like :value="false" />
+        <Like :value="like" @onClick="likeHandler" />
         <p class="text-xs">좋아요 (56)</p>
       </button>
       <button
@@ -81,7 +151,7 @@ onMounted(async () => {
         :data-open="commentOpen"
       >
         <FontAwesomeIcon icon="fa-regular fa-comment" />
-        <p class="text-xs">댓글 (12)</p>
+        <p class="text-xs">댓글 ({{ commentCount }})</p>
       </button>
     </div>
 
@@ -91,22 +161,19 @@ onMounted(async () => {
         <div class="w-9 h-9 flex justify-center items-center">
           <ProfileImg class="w-8 h-8" />
         </div>
-        <CommentInput />
+        <CommentInput @onSubmit="commentSubmitHandler" />
       </div>
       <ul class="flex flex-col items-end gap-2">
-        <!-- <Comment
-          writer="user1"
-          content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-          :time="new Date()"
+        <CommentReview
+          :id="e.id"
+          :writer="e.writer"
+          :content="e.content"
+          :time="e.created"
+          :isReply="e.isReply"
+          :reviewId="props.reviewId"
+          :commentHandler="commentHandler"
+          v-for="e in comments"
         />
-        <Comment writer="user1" content="Reply!!!" :time="new Date()" isReply />
-        <Comment writer="user1" content="OK" :time="new Date()" isReply />
-        <Comment
-          writer="user1"
-          content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-          :time="new Date()"
-        />
-        <Comment writer="user1" content="Please help me" :time="new Date()" /> -->
       </ul>
       <!-- comment count <= 15이면 표시 X -->
       <div class="w-full flex justify-center">

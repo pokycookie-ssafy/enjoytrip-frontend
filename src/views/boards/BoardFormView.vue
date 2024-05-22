@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import Button from '@/components/ui/Button.vue'
 import UploadFileDND from '@/components/ui/UploadFileDND.vue'
 import UploadedImgPreview from '@/components/ui/UploadedImgPreview.vue'
@@ -8,7 +9,6 @@ import type { IBoardDetailResponse } from '@/types/Board'
 import type { IResponse } from '@/types/Response'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { QuillEditor } from '@vueup/vue-quill'
-import axios from 'axios'
 import ImageUploader from 'quill-image-uploader'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -57,7 +57,7 @@ const updateHandler = async () => {
   })
 
   try {
-    const { data } = await axios.patch(`/boards`, formData, {
+    const { data } = await api.patch(`/boards`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -84,7 +84,7 @@ const sumbmitHandler = async () => {
   })
 
   try {
-    const { data } = await axios.post('/boards', formData, {
+    const { data } = await api.post('/boards', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -140,7 +140,7 @@ watch(boardId, async (id) => {
     const userId = authStore.user?.id ?? null
     let url = `/boards/?id=${boardId.value}`
     if (userId) url += `&writer=${userId}`
-    const { data } = await axios.get<IResponse<IBoardDetailResponse>>(url)
+    const { data } = await api.get<IResponse<IBoardDetailResponse>>(url)
     console.log(data)
     if (!data.data.mine) {
       router.push({ name: 'board' })

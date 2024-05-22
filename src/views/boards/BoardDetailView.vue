@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { api } from '@/axios.config'
 import Button from '@/components/ui/Button.vue'
 import Comment from '@/components/ui/Comment.vue'
 import CommentInput from '@/components/ui/CommentInput.vue'
 import Like from '@/components/ui/Like.vue'
+import MutliImage from '@/components/ui/MutliImage.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import ProfileImg from '@/components/ui/ProfileImg.vue'
 import { useAuthStore } from '@/stores/authStore'
 import type { IBoardDetailResponse } from '@/types/Board'
 import type { IComment, ICommentResponse } from '@/types/Comment'
-import type { IResponse } from '@/types/Response'
+import type { IResponse, IResponseC } from '@/types/Response'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { QuillEditor } from '@vueup/vue-quill'
-import axios from 'axios'
 import dayjs from 'dayjs'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -30,6 +31,8 @@ const content = ref('')
 const likecount = ref(0)
 const comments = ref<IComment[]>([])
 const isOwner = ref(false)
+const commentCnt = ref(0)
+const images = ref<string[]>([])
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
@@ -41,7 +44,7 @@ const editHandler = () => {
 
 const deleteHandler = async () => {
   try {
-    const { data } = await axios.delete(`/boards?id=${boardId.value}`)
+    const { data } = await api.delete(`/boards?id=${boardId.value}`)
     console.log(data)
     router.push({ name: 'board' })
   } catch (err) {
@@ -52,7 +55,7 @@ const deleteHandler = async () => {
 const commentSubmitHandler = async (comment: string) => {
   try {
     if (!authStore.user) throw new Error()
-    const { data } = await axios.post(`/boards/comments`, {
+    const { data } = await api.post(`/boards/comments`, {
       userId: authStore.user.id,
       content: comment,
       boardId: boardId.value,
@@ -67,10 +70,11 @@ const commentSubmitHandler = async (comment: string) => {
 
 const commentHandler = async () => {
   try {
-    const { data } = await axios.get<IResponse<ICommentResponse[]>>(
+    const { data } = await api.get<IResponseC<ICommentResponse[]>>(
       `/boards/comments/${boardId.value}`
     )
-
+    console.log(data)
+    commentCnt.value = data.cnt
     const tmpComments: IComment[] = []
     data.data.forEach((e) => {
       tmpComments.push({
@@ -101,7 +105,7 @@ const axiosHandler = async () => {
     const userId = authStore.user?.id ?? null
     let url = `/boards/?id=${boardId.value}`
     if (userId) url += `&writer=${userId}`
-    const { data } = await axios.get<IResponse<IBoardDetailResponse>>(url)
+    const { data } = await api.get<IResponse<IBoardDetailResponse>>(url)
     console.log(data)
     title.value = data.data.title
     writer.value = data.data.writer
@@ -109,6 +113,7 @@ const axiosHandler = async () => {
     content.value = data.data.content
     likecount.value = data.data.likecount
     isOwner.value = data.data.mine
+    images.value = data.data.images
   } catch (err) {
     router.push({ name: 'board' })
     console.error(err)
@@ -178,6 +183,9 @@ watch(
           :options="{ modules: { toolbar: false } }"
         />
       </section>
+      <div class="mt-2 mb-4">
+        <MutliImage :imgSrc="images" v-if="images.length > 0" />
+      </div>
 
       <div
         class="flex justify-end items-center gap-3 text-xs text-zinc-600 pr-1"
@@ -190,7 +198,7 @@ watch(
         <button class="flex items-center gap-1">
           <FontAwesomeIcon icon="fa-regular fa-comment" />
           <p>댓글</p>
-          <p>17</p>
+          <p>{{ commentCnt }}</p>
         </button>
       </div>
 
@@ -216,22 +224,6 @@ watch(
             :commentHandler="commentHandler"
             v-for="e in comments"
           />
-          <!-- <Comment
-            :writer="'admin'"
-            :content="'test'"
-            :time="new Date()"
-            :isReply="false"
-            :boardId="boardId"
-            :commentHandler="commentHandler"
-          />
-          <Comment
-            :writer="'admin'"
-            :content="'test'"
-            :time="new Date()"
-            :isReply="true"
-            :boardId="boardId"
-            :commentHandler="commentHandler"
-          /> -->
         </ul>
         <!-- comment count <= 15이면 표시 X -->
         <div class="w-full flex justify-center">

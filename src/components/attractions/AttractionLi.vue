@@ -14,12 +14,15 @@ import Button from '../ui/Button.vue'
 import { usePlanStore } from '@/stores/plan'
 import areaCode from '@/assets/data/areaCode'
 import contentType from '@/assets/data/contentType'
+import { useToastStore } from '@/stores/toast'
+import { api } from '@/axios.config'
 
 const props = defineProps<{
   data: IAttraction
 }>()
 
 const planStore = usePlanStore()
+const toast = useToastStore()
 
 const reviewOpen = ref(false)
 
@@ -32,6 +35,24 @@ const pageIdx = ref(1)
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
+}
+
+const addHandler = async () => {
+  try {
+    if (!planStore.plan?.id) {
+      toast.addToast('계획을 먼저 선택해주세요', 'danger')
+      return
+    }
+
+    const { data } = await api.post('/plans/candidates', {
+      plan_id: planStore.plan.id,
+      content_id: props.data.contentId,
+    })
+    console.log(data)
+    if (data.status === 'success') planStore.addAttraction(props.data)
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 watch(
@@ -112,9 +133,7 @@ onMounted(() => {
           <p class="text-xs">리뷰 (1624)</p>
         </button>
       </div>
-      <Button @onClick="planStore.addAttraction(props.data)"
-        >내 계획에 추가</Button
-      >
+      <Button @onClick="addHandler">내 계획에 추가</Button>
     </div>
 
     <!-- comment section -->
