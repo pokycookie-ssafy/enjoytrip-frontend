@@ -3,11 +3,14 @@ import { api } from '@/axios.config'
 import Button from '@/components/ui/Button.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import Input, { type IInputInfo } from '@/components/ui/Input.vue'
+import { useToastStore } from '@/stores/toast'
 import type { IResponse } from '@/types/Response'
 import { getLastDate, getLastYear } from '@/utils/calendar'
 import { telDecoder, telIncoder, telRool } from '@/utils/telInput'
-import { validatePassword } from '@/utils/validator'
+import { validateBlank, validatePassword } from '@/utils/validator'
 import { onMounted, ref, watch } from 'vue'
+
+const { addToast } = useToastStore()
 
 const name = ref('')
 const nickname = ref('')
@@ -16,7 +19,12 @@ const password = ref('')
 const passwordCheck = ref('')
 const phone = ref('')
 
+const nameInfo = ref<IInputInfo | null>(null)
+const nicknameInfo = ref<IInputInfo | null>(null)
+const emailInfo = ref<IInputInfo | null>(null)
 const passwordInfo = ref<IInputInfo | null>(null)
+const passwordCheckInfo = ref<IInputInfo | null>(null)
+const phoneInfo = ref<IInputInfo | null>(null)
 
 const yearArr = ref<number[]>([])
 const monthArr = ref<number[]>([])
@@ -30,13 +38,87 @@ const gender = ref<string | null>(null)
 const agency = ref<string | null>(null)
 
 const submitHandler = async () => {
+  nameInfo.value = null
+  nicknameInfo.value = null
+  emailInfo.value = null
   passwordInfo.value = null
+  passwordCheckInfo.value = null
+  phoneInfo.value = null
+
+  if (!validateBlank(email.value)) {
+    emailInfo.value = {
+      message: '이메일을 입력해주세요',
+      status: 'danger',
+    }
+    return
+  }
+
+  if (!validateBlank(password.value)) {
+    passwordInfo.value = {
+      message: '비밀번호를 입력해주세요',
+      status: 'danger',
+    }
+    return
+  }
+
+  if (!validateBlank(passwordCheck.value)) {
+    passwordCheckInfo.value = {
+      message: '비밀번호 확인란을 입력해주세요',
+      status: 'danger',
+    }
+    return
+  }
+
+  if (!validateBlank(nickname.value)) {
+    nicknameInfo.value = {
+      message: '닉네임을 입력해주세요',
+      status: 'danger',
+    }
+    return
+  }
+
+  if (!validateBlank(name.value)) {
+    nameInfo.value = {
+      message: '이름을 입력해주세요',
+      status: 'danger',
+    }
+    return
+  }
+
+  if (!validateBlank(phone.value)) {
+    phoneInfo.value = {
+      message: '전화번호를 입력해주세요',
+      status: 'danger',
+    }
+    return
+  }
 
   if (!validatePassword(password.value, passwordCheck.value)) {
-    passwordInfo.value = {
+    passwordCheckInfo.value = {
       message: '비밀번호가 일치하지 않습니다',
       status: 'danger',
     }
+    return
+  }
+
+  if (gender.value === null) {
+    addToast('성별을 입력해주세요', 'danger')
+    return
+  }
+  if (birthYear.value === null) {
+    addToast('생년월일을 입력해주세요', 'danger')
+    return
+  }
+  if (birthMonth.value === null) {
+    addToast('생년월일을 입력해주세요', 'danger')
+    return
+  }
+  if (birthDate.value === null) {
+    addToast('생년월일을 입력해주세요', 'danger')
+    return
+  }
+  if (agency.value === null) {
+    addToast('통신사를 선택해주세요', 'danger')
     return
   }
 
@@ -97,12 +179,14 @@ onMounted(() => {
         <h3 class="text-indigo-600 font-semibold text-sm pl-1">회원정보</h3>
         <Input
           :value="email"
+          :info="emailInfo ?? undefined"
           class="w-full"
           label="이메일"
           @onChange="(v) => (email = v)"
         />
         <Input
           :value="password"
+          :info="passwordInfo ?? undefined"
           class="w-full"
           label="비밀번호"
           @onChange="(v) => (password = v)"
@@ -110,7 +194,7 @@ onMounted(() => {
         />
         <Input
           :value="passwordCheck"
-          :info="passwordInfo ?? undefined"
+          :info="passwordCheckInfo ?? undefined"
           class="w-full"
           label="비밀번호 확인"
           @onChange="(v) => (passwordCheck = v)"
@@ -118,6 +202,7 @@ onMounted(() => {
         />
         <Input
           :value="nickname"
+          :info="nicknameInfo ?? undefined"
           class="w-full"
           label="닉네임"
           @onChange="(v) => (nickname = v)"
@@ -128,6 +213,7 @@ onMounted(() => {
         <Input
           class="w-full"
           label="이름"
+          :info="nameInfo ?? undefined"
           :value="name"
           @onChange="(v) => (name = v)"
         />
@@ -198,6 +284,7 @@ onMounted(() => {
             class="flex-1"
             :value="phone"
             label="전화번호"
+            :info="phoneInfo ?? undefined"
             @onChange="(v) => (phone = v)"
             :encoder="telIncoder"
             :decoder="telDecoder"
