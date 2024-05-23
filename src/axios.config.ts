@@ -1,8 +1,8 @@
 import axios, { AxiosError } from 'axios'
 
 export const api = axios.create({
-  // baseURL: '/api',
-  baseURL: 'http://192.168.203.106:8080/api',
+  baseURL: '/api',
+  // baseURL: 'http://192.168.203.106:8080/api',
   headers: {
     post: { 'Content-Type': 'application/json' },
   },

@@ -27,6 +27,7 @@ import MyLikePostsView from '@/views/users/MyLikePostsView.vue'
 import MyLikeReviewsView from '@/views/users/MyLikeReviewsView.vue'
 import MyLikeAttractionsView from '@/views/users/MyLikeAttractionsView.vue'
 import NewReviewView from '@/views/reviews/NewReviewView.vue'
+import MyReviewView from '@/views/users/MyReviewView.vue'
 
 const router = createRouter({
   // history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -143,6 +144,11 @@ const router = createRouter({
           path: 'likeReviews',
           name: 'myLikeReviews',
           component: MyLikeReviewsView,
+        },
+        {
+          path: 'reviews',
+          name: 'myReviews',
+          component: MyReviewView,
         },
       ],
       beforeEnter: (to, from, next) => {

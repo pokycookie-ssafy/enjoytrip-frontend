@@ -90,7 +90,10 @@ watch(
           >글쓰기</RouterLink
         >
       </div>
-      <div class="w-full flex justify-center items-center mt-14">
+      <div
+        class="w-full flex justify-center items-center mt-14"
+        v-if="totalCount > 15"
+      >
         <Pagination
           :idx="pageIdx"
           :countPerPage="15"

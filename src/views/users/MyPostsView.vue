@@ -13,11 +13,14 @@ const boards = ref<IBoard[]>([])
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
+  fetchData()
 }
 
 const fetchData = async () => {
   try {
-    const { data } = await api.get<IResponse<IBoardResponse>>(`/`)
+    const { data } = await api.get<IResponse<IBoardResponse>>(
+      `/users/boards?page=${pageIdx.value - 1}`
+    )
     console.log(data)
 
     const boardData = data.data.content
@@ -35,7 +38,6 @@ const fetchData = async () => {
       })
     })
     boards.value = tmpBoard
-
     totalCount.value = data.data.totalElements
   } catch (err) {
     console.error(err)
@@ -51,7 +53,7 @@ onMounted(() => {
   <section class="flex-1 flex justify-center overflow-y-auto">
     <div class="flex flex-col w-full max-w-[800px] h-fit pt-24 p-14">
       <div
-        class="flex justify-between items-center pl-1 pr-1 pt-3 pb-3 gap-3 text-sm text-zinc-700 border-b border-zinc-300"
+        class="flex justify-between items-center text-xs font-semibold pl-1 pr-1 pt-3 pb-3 gap-3 text-zinc-700 border-b border-zinc-300"
       >
         <p class="flex-1 ellipsis">제목</p>
         <p class="w-12 ellipsis text-center">작성일</p>
@@ -71,7 +73,7 @@ onMounted(() => {
           <p class="ellipsis">내가 쓴 글이 없어요</p>
         </div>
         <li
-          class="flex justify-between items-center pl-1 pr-1 pt-3 pb-3 gap-3 text-xs text-zinc-700"
+          class="flex justify-between items-center pl-1 pr-1 pt-3 pb-3 gap-3 text-xs text-zinc-700 border-b"
           v-for="(e, i) in boards"
           :key="i"
         >
@@ -90,7 +92,7 @@ onMounted(() => {
       </ul>
       <div class="w-full flex justify-center items-center mt-10">
         <Pagination
-          v-if="boards.length > 15"
+          v-if="totalCount > 15"
           :idx="pageIdx"
           :countPerPage="15"
           :totalCount="totalCount"

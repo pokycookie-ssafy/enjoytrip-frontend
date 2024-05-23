@@ -15,6 +15,7 @@ import type { IComment, ICommentResponse } from '@/types/Comment'
 import { useAuthStore } from '@/stores/authStore'
 import { api } from '@/axios.config'
 import type { IResponseC } from '@/types/Response'
+import { useToastStore } from '@/stores/toast'
 
 const props = defineProps<{
   content: string
@@ -25,17 +26,39 @@ const props = defineProps<{
   point: number
   profile: string
   reviewId: number
+  like: boolean
+  likecount: number
 }>()
 
 const authStore = useAuthStore()
+const { addToast } = useToastStore()
 
 const comments = ref<IComment[]>([])
 const commentOpen = ref(false)
 const pageIdx = ref(1)
 const commentCount = ref(1)
-const like = ref(false)
+const like = ref(props.like)
+const likecount = ref(props.likecount)
 
-const likeHandler = async () => {}
+const likeHandler = async () => {
+  console.log(props.reviewId)
+  if (!props.reviewId) return
+  if (!authStore.user) {
+    addToast('먼저 로그인 해주세요', 'danger')
+    return
+  }
+  try {
+    const { data } = await api.post(`reviews/likes`, {
+      boardId: props.reviewId,
+      userId: authStore.user.id,
+    })
+    console.log(data)
+    like.value = data.data
+    likecount.value = data.cnt
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 const commentSubmitHandler = async (comment: string) => {
   try {
@@ -66,6 +89,7 @@ const commentHandler = async () => {
       tmpComments.push({
         id: e.id,
         writer: e.writer,
+        writer_image: e.writer_image,
         content: e.content,
         created: new Date(e.commentCreatedDate),
         isReply: false,
@@ -74,6 +98,7 @@ const commentHandler = async () => {
         tmpComments.push({
           id: e.id,
           writer: e.writer,
+          writer_image: e.writer_image,
           content: e.content,
           created: new Date(e.commentCreatedDate),
           isReply: true,
@@ -84,6 +109,11 @@ const commentHandler = async () => {
   } catch (err) {
     console.error(err)
   }
+}
+
+const openHandler = () => {
+  commentOpen.value = !commentOpen.value
+  // if (commentOpen.value) commentHandler()
 }
 
 const paginationHandler = (idx: number) => {
@@ -140,14 +170,15 @@ onMounted(() => {
 
     <div class="flex pl-1 pr-1 gap-5">
       <button
-        class="flex justify-normal items-center gap-1 hover:text-indigo-600"
+        class="flex justify-normal items-center outline-none gap-1 hover:text-red-600"
+        @click="likeHandler"
       >
-        <Like :value="like" @onClick="likeHandler" />
-        <p class="text-xs">좋아요 (56)</p>
+        <Like :value="like" />
+        <p class="text-xs">좋아요 ({{ likecount }})</p>
       </button>
       <button
-        class="flex justify-normal items-center gap-1 hover:text-indigo-600 data-[open=true]:text-indigo-600 data-[open=true]:hover:text-indigo-500"
-        @click="commentOpen = !commentOpen"
+        class="flex justify-normal items-center gap-1 outline-none hover:text-indigo-600 data-[open=true]:text-indigo-600 data-[open=true]:hover:text-indigo-500"
+        @click="openHandler"
         :data-open="commentOpen"
       >
         <FontAwesomeIcon icon="fa-regular fa-comment" />
@@ -162,14 +193,26 @@ onMounted(() => {
         v-if="authStore.user"
       >
         <div class="w-9 h-9 flex justify-center items-center">
-          <ProfileImg class="w-8 h-8" />
+          <ProfileImg class="w-8 h-8" :src="authStore.user?.profileImage" />
         </div>
         <CommentInput @onSubmit="commentSubmitHandler" />
       </div>
       <ul class="flex flex-col items-end gap-2">
+        <div
+          class="mt-3 mb-3 w-full h-36 flex flex-col justify-center items-center border rounded text-zinc-500"
+          v-if="commentCount === 0"
+        >
+          <FontAwesomeIcon
+            class="text-3xl mb-3"
+            icon="fa-regular fa-face-sad-tear"
+          />
+          <p class="ellipsis">아무 댓글도 없어요</p>
+          <p class="ellipsis">첫 댓글을 남겨보세요!</p>
+        </div>
         <CommentReview
           :id="e.id"
           :writer="e.writer"
+          :writerImage="e.writer_image"
           :content="e.content"
           :time="e.created"
           :isReply="e.isReply"

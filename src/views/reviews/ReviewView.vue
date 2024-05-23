@@ -14,7 +14,7 @@ const reviews = ref<IReview[]>([])
 const pageIdx = ref(0)
 
 const filterHandler = (query: string) => {
-  router.push(`/attractions?${query}`)
+  router.push(`/reviews?${query}`)
 }
 
 const fetchReviews = async () => {
@@ -61,6 +61,8 @@ watch(
           :point="e.point"
           :profile="e.writer_image"
           :reviewId="e.review_id"
+          :like="e.like"
+          :likecount="e.likecount"
         />
       </ul>
       <InfiniteScroll v-if="pageIdx > 0" @onObserve="fetchReviews" />

@@ -35,9 +35,9 @@ const fetchAttractions = async () => {
     const { data } = await api.get<IResponse<IAttractionResponse>>(
       `/attractions${query}`
     )
+    console.log(data)
     attractions.value = [...attractions.value, ...data.data.content]
     pageIdx.value++
-    console.log(data)
   } catch (err) {
     console.error(err)
   }
@@ -62,7 +62,6 @@ watch(
         class="flex flex-col gap-4 flex-1 overflow-hidden pt-1 relative -top-1"
       >
         <AttractionLi v-for="attraction in attractions" :data="attraction" />
-        <!-- <AttractionLi v-for="attraction in mockAttraction" :data="attraction" /> -->
         <InfiniteScroll v-if="pageIdx > 0" @onObserve="fetchAttractions" />
       </ul>
     </section>

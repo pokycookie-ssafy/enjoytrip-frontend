@@ -13,6 +13,10 @@ const emits = defineEmits<{
 <template>
   <button @click="emits('onClick')">
     <FontAwesomeIcon v-if="!props.value" icon="fa-regular fa-heart" />
-    <FontAwesomeIcon v-if="props.value" icon="fa-solid fa-heart" />
+    <FontAwesomeIcon
+      class="text-red-600"
+      v-if="props.value"
+      icon="fa-solid fa-heart"
+    />
   </button>
 </template>

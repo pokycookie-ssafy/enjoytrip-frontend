@@ -28,15 +28,20 @@ const menuArr = [
     name: 'myComments',
   },
   {
+    label: '내가 쓴 리뷰',
+    href: '/mypage/reviews',
+    name: 'myReviews',
+  },
+  {
     label: '좋아요 한 글',
     href: '/mypage/likePosts',
     name: 'myLikePosts',
   },
-  {
-    label: '좋아요 한 관광지',
-    href: '/mypage/likeAttractions',
-    name: 'myLikeAttractions',
-  },
+  // {
+  //   label: '좋아요 한 관광지',
+  //   href: '/mypage/likeAttractions',
+  //   name: 'myLikeAttractions',
+  // },
   {
     label: '좋아요 한 리뷰',
     href: '/mypage/likeReviews',
@@ -49,7 +54,11 @@ const menuArr = [
   <main class="w-vw h-screen flex">
     <section class="shadow w-80 p-8 flex-col hidden md:flex">
       <div class="flex flex-col justify-start items-center p-5 border-b">
-        <ProfileImg class="w-20 h-20" editable />
+        <ProfileImg
+          class="w-20 h-20"
+          editable
+          :src="authStore.user?.profileImage"
+        />
         <h2 class="mt-2 text-xl font-semibold text-zinc-700">
           {{ authStore?.user?.nickname ?? 'nickname' }}
         </h2>

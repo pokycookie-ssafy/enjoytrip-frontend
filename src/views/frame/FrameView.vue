@@ -9,7 +9,7 @@ import { usePlanStore } from '@/stores/plan'
 import { useToastStore } from '@/stores/toast'
 import type { IAttraction } from '@/types/Attraction'
 import dayjs from 'dayjs'
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
@@ -62,9 +62,13 @@ const fetchPlans = async () => {
   }
 }
 
-onMounted(() => {
-  fetchPlans()
-})
+watch(
+  () => authStore.user,
+  () => {
+    if (authStore.user) fetchPlans()
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -74,7 +78,7 @@ onMounted(() => {
     <section
       class="p-2 pb-4 border-zinc-300 flex justify-start items-center gap-4 border-b select-none"
     >
-      <ProfileImg class="w-14 h-14" />
+      <ProfileImg class="w-14 h-14" :src="authStore.user?.profileImage" />
       <div v-if="authStore.user" class="flex-1">
         <h3 class="text-xl font-semibold text-zinc-700 ellipsis">
           {{ authStore.user.nickname }}

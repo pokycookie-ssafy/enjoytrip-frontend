@@ -13,5 +13,15 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
   }
 
-  return { user, login, logout }
+  const setNickname = (nickname: string) => {
+    if (!user.value) return
+    user.value.nickname = nickname
+  }
+
+  const setProfile = (img: string) => {
+    if (!user.value) return
+    user.value.profileImage = img
+  }
+
+  return { user, login, logout, setNickname, setProfile }
 })

@@ -65,12 +65,20 @@ const clickHandler = () => {
       </div>
       <div class="flex items-center justify-center group/profile relative">
         <button
-          class="duration-300 hover:bg-indigo-500 hover:border-indigo-400 cursor-pointer flex justify-center border-2 border-indigo-500 items-center transition-all w-11 h-11 shrink-0 bg-indigo-600 rounded-full shadow-md data-[hover=true]:scale-125"
+          class="duration-300 hover:bg-indigo-500 hover:border-indigo-400 cursor-pointer flex justify-center border-2 border-indigo-500 items-center transition-all w-11 h-11 shrink-0 bg-indigo-600 rounded-full shadow-md data-[hover=true]:scale-125 overflow-hidden"
           :to="{ name: 'profile' }"
           @click="clickHandler"
           :data-hover="hover"
         >
-          <FontAwesomeIcon icon="fa-solid fa-user" />
+          <img
+            class="w-full h-full object-cover"
+            v-if="authStore.user && authStore.user.profileImage"
+            :src="authStore.user.profileImage"
+          />
+          <FontAwesomeIcon
+            v-if="!authStore.user || !authStore.user.profileImage"
+            icon="fa-solid fa-user"
+          />
         </button>
         <Caption
           text="프로필 보기"

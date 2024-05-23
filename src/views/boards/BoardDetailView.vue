@@ -8,6 +8,7 @@ import MutliImage from '@/components/ui/MutliImage.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import ProfileImg from '@/components/ui/ProfileImg.vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useToastStore } from '@/stores/toast'
 import type { IBoardDetailResponse } from '@/types/Board'
 import type { IComment, ICommentResponse } from '@/types/Comment'
 import type { IResponse, IResponseC } from '@/types/Response'
@@ -20,6 +21,7 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const { addToast } = useToastStore()
 
 const pageIdx = ref(1)
 const boardId = ref<number | null>(null)
@@ -29,13 +31,35 @@ const writer = ref('')
 const updated = ref(new Date())
 const content = ref('')
 const likecount = ref(0)
+const like = ref(false)
 const comments = ref<IComment[]>([])
 const isOwner = ref(false)
-const commentCnt = ref(0)
+const commentCnt = ref(1)
 const images = ref<string[]>([])
+const writerImage = ref<string | null>(null)
+
+const likeHandler = async () => {
+  if (!boardId.value) return
+  if (!authStore.user) {
+    addToast('먼저 로그인 해주세요', 'danger')
+    return
+  }
+  try {
+    const { data } = await api.post(`boards/likes`, {
+      boardId: boardId.value,
+      userId: authStore.user.id,
+    })
+    console.log(data)
+    like.value = data.data
+    likecount.value = data.cnt
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
+  commentHandler()
 }
 
 const editHandler = () => {
@@ -70,16 +94,17 @@ const commentSubmitHandler = async (comment: string) => {
 
 const commentHandler = async () => {
   try {
-    const { data } = await api.get<IResponseC<ICommentResponse[]>>(
-      `/boards/comments/${boardId.value}`
+    const { data } = await api.get<IResponseC<ICommentResponse>>(
+      `/boards/comments/${boardId.value}?page=${pageIdx.value - 1}`
     )
     console.log(data)
-    commentCnt.value = data.cnt
+    commentCnt.value = data.data.totalElements
     const tmpComments: IComment[] = []
-    data.data.forEach((e) => {
+    data.data.content.forEach((e) => {
       tmpComments.push({
         id: e.id,
         writer: e.writer,
+        writer_image: e.writer_image,
         content: e.content,
         created: new Date(e.commentCreatedDate),
         isReply: false,
@@ -88,6 +113,7 @@ const commentHandler = async () => {
         tmpComments.push({
           id: e.id,
           writer: e.writer,
+          writer_image: e.writer_image,
           content: e.content,
           created: new Date(e.commentCreatedDate),
           isReply: true,
@@ -114,6 +140,8 @@ const axiosHandler = async () => {
     likecount.value = data.data.likecount
     isOwner.value = data.data.mine
     images.value = data.data.images
+    like.value = data.data.like
+    writerImage.value = data.data.writer_image
   } catch (err) {
     router.push({ name: 'board' })
     console.error(err)
@@ -133,6 +161,8 @@ watch(
         commentHandler()
       }
     }
+
+    if (!boardId.value) router.push({ name: 'board' })
   },
   { immediate: true }
 )
@@ -154,7 +184,7 @@ watch(
         <h2 class="text-zinc-800 text-2xl font-semibold pb-2">{{ title }}</h2>
         <div class="flex justify-between items-end">
           <div class="flex items-center gap-2">
-            <ProfileImg class="w-10 h-10" />
+            <ProfileImg class="w-10 h-10" :src="writerImage" />
             <span class="flex flex-col justify-center">
               <h2 class="h-5 flex items-center text-zinc-600">{{ writer }}</h2>
               <p class="h-5 flex items-center text-xs text-zinc-400 font-light">
@@ -190,8 +220,11 @@ watch(
       <div
         class="flex justify-end items-center gap-3 text-xs text-zinc-600 pr-1"
       >
-        <button class="flex items-center gap-1">
-          <Like :value="false" />
+        <button
+          class="flex items-center gap-1 hover:text-red-600"
+          @click="likeHandler"
+        >
+          <Like :value="like" />
           <p>좋아요</p>
           <p>{{ likecount }}</p>
         </button>
@@ -207,16 +240,31 @@ watch(
         id="comment"
         class="pt-3 pb-3 text-sm text-zinc-600 flex flex-col gap-4"
       >
-        <div class="flex justify-start items-start gap-2 pb-2 border-b">
+        <div
+          class="flex justify-start items-start gap-2 pb-2 border-b"
+          v-if="authStore.user"
+        >
           <div class="w-9 h-9 flex justify-center items-center">
-            <ProfileImg class="w-8 h-8" />
+            <ProfileImg class="w-8 h-8" :src="authStore.user?.profileImage" />
           </div>
           <CommentInput @onSubmit="commentSubmitHandler" />
         </div>
         <ul v-if="boardId" class="flex flex-col items-end gap-2">
+          <div
+            class="mt-3 mb-3 w-full h-36 flex flex-col justify-center items-center border rounded text-zinc-500"
+            v-if="commentCnt === 0"
+          >
+            <FontAwesomeIcon
+              class="text-3xl mb-3"
+              icon="fa-regular fa-face-sad-tear"
+            />
+            <p class="ellipsis">아무 댓글도 없어요</p>
+            <p class="ellipsis">첫 댓글을 남겨보세요!</p>
+          </div>
           <Comment
             :id="e.id"
             :writer="e.writer"
+            :writerImage="e.writer_image"
             :content="e.content"
             :time="e.created"
             :isReply="e.isReply"
@@ -225,12 +273,11 @@ watch(
             v-for="e in comments"
           />
         </ul>
-        <!-- comment count <= 15이면 표시 X -->
-        <div class="w-full flex justify-center">
+        <div class="w-full flex justify-center" v-if="commentCnt > 15">
           <Pagination
             :idx="pageIdx"
             :countPerPage="15"
-            :totalCount="178"
+            :totalCount="commentCnt"
             @onClick="paginationHandler"
             @onPrev="paginationHandler"
             @onNext="paginationHandler"

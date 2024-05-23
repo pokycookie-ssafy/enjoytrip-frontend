@@ -10,6 +10,7 @@ import { api } from '@/axios.config'
 const props = defineProps<{
   id: number
   writer: string
+  writerImage: string | null
   content: string
   time: Date
   boardId: number
@@ -69,7 +70,7 @@ const commentSubmitHandler = async (comment: string) => {
   >
     <div class="flex justify-between items-start">
       <div class="flex justify-start items-center gap-2">
-        <ProfileImg class="w-8 h-8" />
+        <ProfileImg class="w-8 h-8" :src="props.writerImage" />
         <span>
           <h2 class="text-zinc-700">{{ props.writer }}</h2>
           <p class="text-xs text-zinc-400 font-light">{{ timeString }}</p>
@@ -92,7 +93,7 @@ const commentSubmitHandler = async (comment: string) => {
     class="w-indent flex justify-start items-start gap-2"
   >
     <div class="w-9 h-9 flex justify-center items-center">
-      <ProfileImg class="w-8 h-8" />
+      <ProfileImg class="w-8 h-8" :src="authStore.user?.profileImage" />
     </div>
     <CommentInput ref="replyREF" @onSubmit="commentSubmitHandler" />
   </div>

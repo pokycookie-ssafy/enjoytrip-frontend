@@ -12,9 +12,7 @@ const reviews = ref<IReview[]>([])
 
 const fetchReviews = async () => {
   try {
-    const { data } = await api.get(
-      `/users/reviews/like?page=${pageIdx.value - 1}`
-    )
+    const { data } = await api.get(`/users/reviews?page=${pageIdx.value - 1}`)
     console.log(data)
     const fetchedReviews: IReview[] = data.data.map((e: any) => {
       return { ...e, review_date: new Date(e.review_date) }
@@ -50,7 +48,7 @@ onMounted(() => {
             class="text-3xl"
             icon="fa-regular fa-face-sad-tear"
           />
-          <p class="ellipsis">내가 좋아요 한 리뷰가 없어요</p>
+          <p class="ellipsis">내가 쓴 리뷰가 없어요</p>
         </div>
         <ReviewLi
           v-for="e in reviews"

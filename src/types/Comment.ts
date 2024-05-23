@@ -5,6 +5,7 @@ export interface ICommentContent {
   content: string
   id: number
   writer: string
+  writer_image: string | null
 }
 
 export interface ICommentResponse {
@@ -15,6 +16,7 @@ export interface ICommentResponse {
 export interface IComment {
   id: number
   writer: string
+  writer_image: string | null
   content: string
   created: Date
   isReply: boolean

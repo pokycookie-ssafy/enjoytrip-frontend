@@ -16,10 +16,16 @@ import areaCode from '@/assets/data/areaCode'
 import contentType from '@/assets/data/contentType'
 import { useToastStore } from '@/stores/toast'
 import { api } from '@/axios.config'
+import { useAuthStore } from '@/stores/authStore'
+import type { IResponse } from '@/types/Response'
+import type { IReviewPreview, IReviewResponse } from '@/types/Review'
 
 const props = defineProps<{
   data: IAttraction
 }>()
+
+const authStore = useAuthStore()
+const { addToast } = useToastStore()
 
 const planStore = usePlanStore()
 const toast = useToastStore()
@@ -30,8 +36,61 @@ const sidoName = ref('')
 const gugunName = ref('')
 const type = ref<IContentType | null>(null)
 
-const mockStarData = ref<number[]>([])
+const reviews = ref<IReviewPreview[]>([])
+const reviewCount = ref(props.data.reviews)
 const pageIdx = ref(1)
+
+const like = ref(false)
+const likecount = ref(0)
+
+// const likeHandler = async () => {
+//   if (!authStore.user) {
+//     addToast('먼저 로그인 해주세요', 'danger')
+//     return
+//   }
+
+//   try {
+//     const { data } = await api.post(`attractions/likes`, {
+//       boardId: props.data.contentId,
+//       userId: authStore.user.id,
+//     })
+//     console.log(data)
+//     like.value = data.data
+//     likecount.value = data.cnt
+//   } catch (error) {
+//     console.error(error)
+//   }
+// }
+
+const reviewFetchHandler = async () => {
+  try {
+    const { data } = await api.get<IResponse<IReviewResponse>>(
+      `/reviews/${props.data.contentId}?page=${pageIdx.value - 1}`
+    )
+    if ((data as any).message) {
+      return
+    }
+    console.log(data)
+    reviewCount.value = data.data.numberOfElements
+    reviews.value = data.data.content.map((e) => {
+      return {
+        reviewId: e.review_id,
+        writer: e.writer,
+        writerImage: e.writer_image,
+        time: new Date(e.review_date),
+        content: e.review_content,
+        point: e.point,
+      }
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const reviewOpenHandler = () => {
+  reviewOpen.value = !reviewOpen.value
+  if (reviewOpen.value) reviewFetchHandler()
+}
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
@@ -68,23 +127,6 @@ watch(
   },
   { immediate: true }
 )
-
-onMounted(() => {
-  // 랜덤 별점 mock data
-  const tmpArr = []
-  for (let i = 0; i < 5; i++) tmpArr.push(1)
-  for (let i = 0; i < 12; i++) tmpArr.push(2)
-  for (let i = 0; i < 234; i++) tmpArr.push(3)
-  for (let i = 0; i < 172; i++) tmpArr.push(4)
-  for (let i = 0; i < 113; i++) tmpArr.push(5)
-  for (let i = 0; i < 166; i++) tmpArr.push(6)
-  for (let i = 0; i < 146; i++) tmpArr.push(7)
-  for (let i = 0; i < 352; i++) tmpArr.push(8)
-  for (let i = 0; i < 672; i++) tmpArr.push(9)
-  for (let i = 0; i < 1212; i++) tmpArr.push(10)
-
-  mockStarData.value = tmpArr
-})
 </script>
 
 <template>
@@ -113,24 +155,28 @@ onMounted(() => {
         :lat="props.data.latitude"
         :lng="props.data.longitude"
       />
-      <AttractionStarRating :data="mockStarData" />
+      <AttractionStarRating
+        :rate="props.data.point"
+        :count="props.data.reviews"
+      />
     </div>
 
     <div class="flex justify-between gap-2 items-center">
       <div class="flex pl-1 pr-1 gap-5">
-        <button
-          class="flex justify-normal items-center gap-1 hover:text-indigo-600"
+        <!-- <button
+          class="flex justify-normal items-center gap-1 hover:text-red-600"
+          @click="likeHandler"
         >
-          <Like :value="false" />
-          <p class="text-xs ellipsis">좋아요 (56)</p>
-        </button>
+          <Like :value="like" />
+          <p class="text-xs ellipsis">좋아요 ({{ likecount }})</p>
+        </button> -->
         <button
           class="flex justify-normal items-center gap-1 hover:text-indigo-600 data-[open=true]:text-indigo-600 data-[open=true]:hover:text-indigo-500"
-          @click="reviewOpen = !reviewOpen"
+          @click="reviewOpenHandler"
           :data-open="reviewOpen"
         >
           <FontAwesomeIcon icon="fa-regular fa-star" />
-          <p class="text-xs ellipsis">리뷰 (1624)</p>
+          <p class="text-xs ellipsis">리뷰 ({{ reviewCount }})</p>
         </button>
       </div>
       <Button class="ellipsis" @onClick="addHandler">내 계획에 추가</Button>
@@ -139,14 +185,33 @@ onMounted(() => {
     <!-- comment section -->
     <section class="flex flex-col gap-2" v-show="reviewOpen">
       <ul class="flex flex-col gap-2">
-        <ReviewPreviewCard v-for="i in 5" :key="i" />
+        <div
+          class="mt-3 mb-3 w-full h-36 flex flex-col justify-center items-center border rounded text-zinc-500"
+          v-if="reviewCount === 0"
+        >
+          <FontAwesomeIcon
+            class="text-3xl mb-3"
+            icon="fa-regular fa-face-sad-tear"
+          />
+          <p class="ellipsis">아무 리뷰도 없어요</p>
+          <p class="ellipsis">첫 리뷰를 남겨보세요!</p>
+        </div>
+        <ReviewPreviewCard
+          :reviewId="e.reviewId"
+          :writer="e.writer"
+          :writerImage="e.writerImage"
+          :time="e.time"
+          :content="e.content"
+          :point="e.point"
+          v-for="(e, i) in reviews"
+          :key="i"
+        />
       </ul>
-      <!-- comment count <= 15이면 표시 X -->
-      <div class="w-full flex justify-center">
+      <div class="w-full flex justify-center" v-if="reviewCount > 15">
         <Pagination
           :idx="pageIdx"
           :countPerPage="15"
-          :totalCount="178"
+          :totalCount="reviewCount"
           @onClick="paginationHandler"
           @onPrev="paginationHandler"
           @onNext="paginationHandler"

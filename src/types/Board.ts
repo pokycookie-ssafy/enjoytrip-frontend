@@ -30,10 +30,12 @@ export interface IBoardDetailResponse {
   writer: string
   title: string
   content: string
+  like: boolean
   likecount: number
   readcount: number
   regDate: string
   updateDate: string
   mine: boolean
   images: string[]
+  writer_image: string
 }

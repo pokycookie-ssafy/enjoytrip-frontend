@@ -4,31 +4,33 @@ import StarRating from '@/components/ui/StarRating.vue'
 import { ref, watch } from 'vue'
 
 const props = defineProps<{
-  data: number[]
+  // data: number[]
+  rate: number
+  count: number
 }>()
 
 const data = ref<number[]>([])
 const ratio = ref<number[]>([])
 const isOpen = ref(false)
 
-watch(
-  () => props.data,
-  () => {
-    const tmpRank = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    props.data.forEach((e) => {
-      const rank = Math.ceil(e / 2)
-      tmpRank[rank]++
-    })
-    data.value = tmpRank
+// watch(
+//   () => props.data,
+//   () => {
+//     const tmpRank = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+//     props.data.forEach((e) => {
+//       const rank = Math.ceil(e / 2)
+//       tmpRank[rank]++
+//     })
+//     data.value = tmpRank
 
-    const tmpRatio = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    tmpRank.forEach((e, i) => {
-      tmpRatio[i] = Math.round((e / props.data.length) * 100)
-    })
-    ratio.value = tmpRatio
-  },
-  { immediate: true }
-)
+//     const tmpRatio = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+//     tmpRank.forEach((e, i) => {
+//       tmpRatio[i] = Math.round((e / props.data.length) * 100)
+//     })
+//     ratio.value = tmpRatio
+//   },
+//   { immediate: true }
+// )
 </script>
 
 <template>
@@ -37,9 +39,9 @@ watch(
   >
     <div class="flex justify-between items-start">
       <h2 class="text-zinc-600 font-semibold text-base ellipsis">
-        사용자 리뷰
+        사용자 리뷰 ({{ props.count }})
       </h2>
-      <button
+      <!-- <button
         class="data-[open=true]:rotate-180 transition-all"
         :data-open="isOpen"
         @click="isOpen = !isOpen"
@@ -48,11 +50,13 @@ watch(
           class="hover:text-indigo-600"
           icon="fa-solid fa-chevron-down"
         />
-      </button>
+      </button> -->
     </div>
-    <span class="flex justify-start items-center gap-2">
-      <StarRating class="w-24" :value="7" readonly />
-      <p class="font-thin text-sm text-indigo-600 ellipsis">(리뷰 1624개)</p>
+    <span class="flex justify-start items-center gap-3">
+      <StarRating class="w-24" :value="props.rate" readonly />
+      <p class="font-semibold text-sm text-indigo-600 ellipsis">
+        {{ (props.rate / 2).toFixed(2) }}
+      </p>
     </span>
     <div
       class="flex flex-col gap-2 data-[open=true]:mt-2 data-[open=true]:h-[132px] h-0 transition-all overflow-hidden"

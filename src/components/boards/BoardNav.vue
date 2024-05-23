@@ -56,9 +56,9 @@ const searchOption = ref(searchOptions[0])
     <ul class="flex text-xs gap-2 font-semibold">
       <li class="flex-1"></li>
       <li class="w-20">작성자</li>
-      <li class="w-12">작성일</li>
-      <li class="w-12">조회수</li>
-      <li class="w-12">좋아요</li>
+      <li class="w-12 text-center">작성일</li>
+      <li class="w-12 text-center">조회수</li>
+      <li class="w-12 text-center">좋아요</li>
     </ul>
   </nav>
 </template>

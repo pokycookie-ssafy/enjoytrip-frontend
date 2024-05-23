@@ -32,6 +32,14 @@ const editHandler = async () => {
     if (data.status === 'success') {
       toastStore.addToast('유저정보가 변경되었습니다')
     }
+    const userStr = sessionStorage.getItem('user')
+    if (userStr) {
+      const user = JSON.parse(userStr)
+      user.nickname = nickname.value
+      // user.phone = phone.value
+      sessionStorage.setItem('user', JSON.stringify(user))
+      authStore.setNickname(nickname.value)
+    }
   } catch (err) {
     console.error(err)
   }
@@ -69,7 +77,7 @@ onMounted(async () => {
     <div class="flex flex-col gap-8 w-full max-w-[600px] h-fit pt-24 p-14">
       <InputGroup>
         <div class="flex items-center justify-start gap-4 pb-4 border-b mb-4">
-          <ProfileImg class="w-14 h-14" />
+          <ProfileImg class="w-14 h-14" :src="authStore.user?.profileImage" />
           <span>
             <h2 class="text-xl font-semibold text-zinc-700">
               {{ authStore?.user?.nickname ?? 'nickname' }}

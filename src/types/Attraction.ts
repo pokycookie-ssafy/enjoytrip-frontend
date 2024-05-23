@@ -14,6 +14,8 @@ export interface IAttraction {
   mlevel: number
   readcount: number
   zipcode: number
+  point: number
+  reviews: number
 }
 
 export interface IAttractionResponse {

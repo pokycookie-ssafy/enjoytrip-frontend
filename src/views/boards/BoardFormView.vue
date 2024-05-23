@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toast'
 import type { IBoardDetailResponse } from '@/types/Board'
 import type { IResponse } from '@/types/Response'
+import { validateBlank } from '@/utils/validator'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { QuillEditor } from '@vueup/vue-quill'
 import ImageUploader from 'quill-image-uploader'
@@ -74,8 +75,16 @@ const updateHandler = async () => {
 }
 
 const sumbmitHandler = async () => {
-  const formData = new FormData()
+  if (!validateBlank(title.value)) {
+    toast.addToast('제목을 입력해주세요', 'danger')
+    return
+  }
+  if (!validateBlank(content.value)) {
+    toast.addToast('내용을 입력해주세요', 'danger')
+    return
+  }
 
+  const formData = new FormData()
   formData.append('title', title.value)
   formData.append('content', content.value)
   uploadFiles.value.forEach((upload) => {
@@ -90,7 +99,8 @@ const sumbmitHandler = async () => {
       },
     })
     console.log(data)
-    router.push({ path: `boards/${data.id}` })
+    // router.push({ path: `boards/${data.id}` })
+    router.push({ name: 'board' })
   } catch (err) {
     console.error(err)
   }
