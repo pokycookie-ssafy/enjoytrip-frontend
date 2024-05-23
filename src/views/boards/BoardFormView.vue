@@ -156,6 +156,11 @@ watch(boardId, async (id) => {
 watch(
   () => route.params,
   (params) => {
+    if (!authStore.user) {
+      console.log('BACK')
+      router.push({ name: 'board' })
+      return
+    }
     if (!params?.id) boardId.value = null
     else if (Array.isArray(params.id)) boardId.value = null
     else {

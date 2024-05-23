@@ -145,11 +145,11 @@ const router = createRouter({
           component: MyLikeReviewsView,
         },
       ],
-      // beforeEnter: (to, from, next) => {
-      //   const authStore = useAuthStore()
-      //   if (authStore.user) next()
-      //   else next({ name: 'login' })
-      // },
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.user) next()
+        else next({ name: 'login' })
+      },
     },
     {
       path: '/reviews',

@@ -7,9 +7,11 @@ import BoardNav from '@/components/boards/BoardNav.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import type { IResponse } from '@/types/Response'
 import { api } from '@/axios.config'
+import { useAuthStore } from '@/stores/authStore'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 
 const pageIdx = ref(1)
 const boards = ref<IBoard[]>([])
@@ -78,7 +80,10 @@ watch(
         <BoardLi v-for="e in notices" :data="e" isNotice />
         <BoardLi v-for="e in boards" :data="e" />
       </ul>
-      <div class="w-full flex justify-end items-center pt-2 pb-2">
+      <div
+        class="w-full flex justify-end items-center pt-2 pb-2"
+        v-if="authStore.user"
+      >
         <RouterLink
           class="rounded transition-colors text-white p-2 pl-4 pr-4 text-sm bg-indigo-600 hover:bg-indigo-500"
           :to="{ name: 'newBoard' }"
