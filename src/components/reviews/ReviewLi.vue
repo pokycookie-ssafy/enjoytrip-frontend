@@ -33,7 +33,7 @@ const authStore = useAuthStore()
 const comments = ref<IComment[]>([])
 const commentOpen = ref(false)
 const pageIdx = ref(1)
-const commentCount = ref(0)
+const commentCount = ref(1)
 const like = ref(false)
 
 const likeHandler = async () => {}
@@ -57,7 +57,7 @@ const commentSubmitHandler = async (comment: string) => {
 const commentHandler = async () => {
   try {
     const { data } = await api.get<IResponseC<ICommentResponse[]>>(
-      `/reviews/comments/${props.reviewId}`
+      `/reviews/comments/${props.reviewId}?page=${pageIdx}`
     )
     console.log(data)
     const tmpComments: IComment[] = []
@@ -175,12 +175,11 @@ onMounted(() => {
           v-for="e in comments"
         />
       </ul>
-      <!-- comment count <= 15이면 표시 X -->
-      <div class="w-full flex justify-center">
+      <div class="w-full flex justify-center" v-if="commentCount > 15">
         <Pagination
           :idx="pageIdx"
           :countPerPage="15"
-          :totalCount="178"
+          :totalCount="commentCount"
           @onClick="paginationHandler"
           @onPrev="paginationHandler"
           @onNext="paginationHandler"
