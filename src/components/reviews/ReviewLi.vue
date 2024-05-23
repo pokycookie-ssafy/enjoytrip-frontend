@@ -10,7 +10,6 @@ import AttractionReviewCard from '@/components/reviews/AttractionReviewCard.vue'
 import type { IAttraction } from '@/types/Attraction'
 import Pagination from '../ui/Pagination.vue'
 import { QuillEditor } from '@vueup/vue-quill'
-import Comment from '../ui/Comment.vue'
 import CommentReview from '../ui/CommentReview.vue'
 import type { IComment, ICommentResponse } from '@/types/Comment'
 import { useAuthStore } from '@/stores/authStore'
@@ -56,14 +55,14 @@ const commentSubmitHandler = async (comment: string) => {
 
 const commentHandler = async () => {
   try {
-    const { data } = await api.get<IResponseC<ICommentResponse[]>>(
-      `/reviews/comments/${props.reviewId}?page=${pageIdx}`
+    const { data } = await api.get<IResponseC<ICommentResponse>>(
+      `/reviews/comments/${props.reviewId}?page=${pageIdx.value - 1}`
     )
     console.log(data)
     const tmpComments: IComment[] = []
-    commentCount.value = data.cnt
+    commentCount.value = data.data.totalElements
 
-    data.data.forEach((e) => {
+    data.data.content.forEach((e) => {
       tmpComments.push({
         id: e.id,
         writer: e.writer,
@@ -89,6 +88,7 @@ const commentHandler = async () => {
 
 const paginationHandler = (idx: number) => {
   pageIdx.value = idx
+  commentHandler()
 }
 
 const timeString = computed(() => {
@@ -157,7 +157,10 @@ onMounted(() => {
 
     <!-- comment section -->
     <section class="flex flex-col gap-2" v-show="commentOpen">
-      <div class="flex justify-start items-start gap-2 pb-2 border-b">
+      <div
+        class="flex justify-start items-start gap-2 pb-2 border-b"
+        v-if="authStore.user"
+      >
         <div class="w-9 h-9 flex justify-center items-center">
           <ProfileImg class="w-8 h-8" />
         </div>

@@ -1,10 +1,15 @@
-export interface ICommentResponse {
+export interface ICommentContent {
   commentCreatedDate: string
-  commentList: ICommentResponse[]
+  commentList: ICommentContent[]
   commentUpdatedDate: string
   content: string
   id: number
   writer: string
+}
+
+export interface ICommentResponse {
+  content: ICommentContent[]
+  totalElements: number
 }
 
 export interface IComment {
