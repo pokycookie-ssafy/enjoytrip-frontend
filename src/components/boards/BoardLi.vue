@@ -39,7 +39,7 @@ const timeString = computed(() => {
     </RouterLink>
     <div class="flex items-center gap-2 text-xs">
       <p class="w-20 ellipsis">{{ props.data.writer }}</p>
-      <p class="w-12 ellipsis text-center">{{ timeString }}</p>
+      <p class="w-14 ellipsis text-center">{{ timeString }}</p>
       <p class="w-12 ellipsis text-center">{{ props.data.readCount }}</p>
       <p class="w-12 ellipsis text-center">{{ props.data.likeCount }}</p>
     </div>
